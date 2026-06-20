@@ -3322,7 +3322,7 @@ Topic: ${t}`
             const slide = el._slides[el._currentSlide];
             counter.textContent = `${el._currentSlide + 1} / ${el._slides.length}`;
             const isFs = document.getElementById('slideStage')?.classList.contains('slide-fullscreen');
-            container.innerHTML = renderSlideHTML(slide, { fullscreen: isFs, photos: !!slidesPhotosEnabled, photoData: el._photos });
+            container.innerHTML = renderSlideHTML(slide, { fullscreen: isFs, photos: !!slidesPhotosEnabled, photoData: el._photos, deckTitle: el._slides.deckTitle });
             // Render chart into the slide's chart container (if this is a chart slide)
             const chartHost = document.getElementById('slideChartContainer');
             if (chartHost) {
@@ -3347,8 +3347,9 @@ Topic: ${t}`
             const el = document.getElementById('slideThumbs');
             if (!el) return;
             el.innerHTML = slides.map((s, i) => {
-                const icon = s.layout === 'title' ? '🎯' : s.layout === 'chart' ? '📈' : s.layout === 'quote' ? '💬' : s.layout === 'split' ? '↔️' : '📋';
-                return `<div class="slide-thumb" onclick="showSlide(${i})" style="flex-shrink:0;width:60px;height:34px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all 0.15s;opacity:0.5">${icon}</div>`;
+                const icon = LAYOUT_ICONS[s.layout] || iconFor(s.heading, s.layout);
+                const label = (s.heading || '').slice(0, 20) || '';
+                return `<div class="slide-thumb" onclick="showSlide(${i})" title="${escapeHtml(s.heading || s.layout)}" style="flex-shrink:0;min-width:62px;height:34px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;gap:4px;padding:0 8px;font-size:12px;cursor:pointer;transition:all 0.15s;opacity:0.55;color:var(--text-secondary);overflow:hidden;white-space:nowrap"><span style="font-size:14px">${icon}</span>${label ? `<span style="overflow:hidden;text-overflow:ellipsis">${escapeHtml(label)}</span>` : ''}</div>`;
             }).join('');
         }
 
@@ -3432,58 +3433,205 @@ Topic: ${t}`
             return null;
         }
 
+        // --- Generated slide visuals (no network, themeable) ---
+        // Soft gradients for title/section/quote slides. They resolve to CSS vars so
+        // dark mode works for free; color-mix tints the accent without hardcoding hex.
+        const SLIDE_GRADIENTS = [
+            'linear-gradient(135deg, var(--accent-soft), var(--bg-elevated))',
+            'linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--bg-elevated)), var(--bg-elevated))',
+            'linear-gradient(135deg, var(--bg-sidebar), var(--bg-elevated))',
+            'linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--bg-sidebar)), var(--bg-elevated))',
+        ];
+        const gradientFor = (i) => SLIDE_GRADIENTS[(i || 0) % SLIDE_GRADIENTS.length];
+
+        // Topic → emoji map (best-effort, offline). Matched against the heading so a
+        // revenue slide gets 💰, a sustainability slide 🌱, etc. Longest keys first so
+        // "market share" wins over "market". Falls back to a layout default.
+        const TOPIC_ICONS = {
+            revenue:'💰', sales:'💰', profit:'💰', finance:'💰', funding:'💰', valuation:'💰', 'market cap':'💰', gdp:'💰',
+            growth:'📈', 'market share':'📊', market:'📊', adoption:'📊', metrics:'📊', kpi:'📊', performance:'📊', 'key metrics':'📊',
+            customer:'🧑', users:'👥', audience:'👥', team:'👥', employees:'👥', workforce:'👥', leadership:'👥',
+            product:'📦', products:'📦', portfolio:'📦', catalog:'📦',
+            technology:'⚙️', tech:'⚙️', engineering:'⚙️', platform:'⚙️', infrastructure:'⚙️', software:'⚙️', ai:'🤖', 'machine learning':'🤖', data:'🗄️',
+            innovation:'💡', research:'🔬', 'r&d':'🔬', science:'🔬', patent:'🔬', discovery:'🔬',
+            sustainability:'🌱', climate:'🌱', environment:'🌱', green:'🌱', carbon:'🌱', recycling:'♻️', recyclable:'♻️',
+            strategy:'🎯', vision:'🎯', roadmap:'🗺️', goals:'🎯', objectives:'🎯', strategic:'🎯',
+            timeline:'🕒', history:'🕒', evolution:'🕒', journey:'🕒', milestones:'🕒', legacy:'🕒',
+            comparison:'⚖️', versus:'⚖️', difference:'⚖️',
+            'case study':'📁', story:'📖', brand:'🏷️', identity:'🏷️',
+            security:'🔒', privacy:'🔒', compliance:'🔒',
+            global:'🌍', worldwide:'🌍', international:'🌍', expansion:'🌍',
+            digital:'📱', 'e-commerce':'🛒', online:'🌐', streaming:'📺', media:'📺', television:'📺', content:'🎞️',
+            future:'🚀', outlook:'🚀', conclusion:'✅', summary:'✅', takeaways:'✅', 'thank you':'🙏', questions:'❓',
+            agenda:'🗒️', introduction:'🎬', overview:'🎬', background:'🎬',
+            health:'💊', medical:'💊', skincare:'🧴', beauty:'🧴',
+            energy:'⚡', power:'⚡', manufacturing:'🏭', logistics:'🚚',
+            education:'🎓', learning:'🎓', study:'🎓', guide:'📚',
+            food:'🍽️', agriculture:'🌾', farming:'🌾'
+        };
+        const LAYOUT_ICONS = { title:'🎯', section:'▸', bullets:'📋', split:'↔️', chart:'📈', quote:'💬', stats:'🔢', image:'🖼️' };
+        const _TOPIC_KEYS = Object.keys(TOPIC_ICONS).sort((a, b) => b.length - a.length);
+        function iconFor(heading, layout) {
+            const h = (heading || '').toLowerCase();
+            for (const kw of _TOPIC_KEYS) if (h.includes(kw)) return TOPIC_ICONS[kw];
+            return LAYOUT_ICONS[layout] || '📋';
+        }
+
+        // Theme-aware hex palette for the .pptx exporter (PptxGenJS needs solid hex,
+        // not CSS vars). Reads the active theme so a dark-mode deck exports dark.
+        function pptxPalette() {
+            const dark = document.documentElement.dataset.theme === 'dark';
+            return dark
+                ? { ACCENT:'D97757', ACCENTSOFT:'3A2A22', TEXT:'F5F3EF', MUTED:'A39B91', PANEL:'2A2826', BG:'1F1E1D', BORDER:'3A3835' }
+                : { ACCENT:'D97757', ACCENTSOFT:'FBEDE4', TEXT:'1A1A1A', MUTED:'6B6B6B', PANEL:'F5F4F2', BG:'FFFFFF', BORDER:'E5E3DF' };
+        }
+
         function renderSlideHTML(slide, opts) {
             opts = opts || {};
             const body = slide.body;
             const isFs = !!opts.fullscreen;
-            const titleSize = isFs ? '48px' : '28px';
+            const photos = !!opts.photos;
+            const photoData = opts.photoData || null;
+            const deckTitle = opts.deckTitle || '';
+            const idx = slide.index || 0;
+            const titleSize = isFs ? '48px' : '30px';
             const bodySize = isFs ? '24px' : '15px';
             const bulletSize = isFs ? '22px' : '15px';
+            const headSize = isFs ? '32px' : '21px';
+            const headingText = slide.heading || '';
+            const icon = iconFor(headingText, slide.layout);
+            // Content with the leading "# / ##" heading line removed — headingText
+            // already carries it, so this avoids a duplicate heading in the body.
+            const content = body.replace(/^(#|##)\s+.+\n?/m, '').trim();
+            const accentBar = `<div style="position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent)"></div>`;
+            const headHtml = headingText
+                ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:${isFs ? 22 : 16}px"><span style="font-size:${isFs ? 30 : 22}px;line-height:1">${icon}</span><h2 style="margin:0;font-size:${headSize};font-weight:700;color:var(--text-primary);letter-spacing:-0.01em;line-height:1.2">${escapeHtml(headingText)}</h2></div>`
+                : '';
 
             if (slide.layout === 'title') {
                 const m = body.match(/^#\s+(.+)/m);
-                const title = m ? m[1] : body.split('\n')[0];
+                const title = m ? m[1] : headingText || body.split('\n')[0];
                 const subtitle = body.split('\n').slice(1).join('\n').trim().replace(/^##\s+/, '');
-                return `<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;background:linear-gradient(135deg,var(--accent-soft),var(--bg-elevated))">
-                    <h1 style="font-size:${titleSize};font-weight:700;margin-bottom:12px;color:var(--text-primary);letter-spacing:-0.02em">${escapeHtml(title)}</h1>
-                    ${subtitle ? `<p style="font-size:${bodySize};color:var(--text-secondary)">${escapeHtml(subtitle)}</p>` : ''}
+                const photo = photos && photoData && photoData[idx];
+                const bg = photo
+                    ? `linear-gradient(135deg, rgba(0,0,0,.58), rgba(0,0,0,.40)), url('${photo.url}') center/cover`
+                    : gradientFor(idx);
+                const kicker = deckTitle || 'Presentation';
+                return `<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:${isFs ? '56px' : '36px'};text-align:center;background:${bg};color:${photo ? '#fff' : 'var(--text-primary)'};position:relative;overflow:hidden">
+                    ${photo ? '' : `<div style="position:absolute;inset:0;background:radial-gradient(circle at 72% 28%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 62%);pointer-events:none"></div>`}
+                    <div style="position:relative;z-index:1;max-width:84%">
+                        <div style="font-size:${isFs ? 22 : 14}px;letter-spacing:.18em;text-transform:uppercase;color:${photo ? 'rgba(255,255,255,.82)' : 'var(--accent)'};margin-bottom:${isFs ? 16 : 10}px;font-weight:600">${escapeHtml(kicker.slice(0, 48))}</div>
+                        <h1 style="font-size:${titleSize};font-weight:800;margin:0 0 14px;color:inherit;letter-spacing:-0.02em;line-height:1.1">${escapeHtml(title)}</h1>
+                        ${subtitle ? `<p style="font-size:${bodySize};margin:0;color:${photo ? 'rgba(255,255,255,.85)' : 'var(--text-secondary)'}">${escapeHtml(subtitle)}</p>` : ''}
+                    </div>
+                </div>`;
+            }
+            if (slide.layout === 'section') {
+                const numeral = String(idx + 1).padStart(2, '0');
+                return `<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;background:${gradientFor(idx)};position:relative;overflow:hidden">
+                    <div style="position:absolute;font-size:${isFs ? '240px' : '150px'};font-weight:800;color:color-mix(in srgb, var(--accent) 22%, transparent);line-height:1;letter-spacing:-0.05em;user-select:none">${escapeHtml(numeral)}</div>
+                    <div style="position:relative;z-index:1">
+                        <div style="width:${isFs ? '64px' : '44px'};height:4px;background:var(--accent);margin:0 auto ${isFs ? 20 : 14}px;border-radius:2px"></div>
+                        <h2 style="margin:0 auto;font-size:${isFs ? '40px' : '26px'};font-weight:700;color:var(--text-primary);max-width:80%;letter-spacing:-0.01em;line-height:1.2">${escapeHtml(headingText)}</h2>
+                    </div>
                 </div>`;
             }
             if (slide.layout === 'quote') {
-                const m = body.match(/>\s*(.+)/);
-                const quote = m ? m[1] : body;
-                const attr = body.match(/—\s*(.+)/);
-                return `<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center">
-                    <blockquote style="font-size:${isFs ? '32px' : '22px'};font-style:italic;border:none;padding:0;color:var(--text-primary);margin-bottom:16px;max-width:80%">${escapeHtml(quote)}</blockquote>
-                    ${attr ? `<cite style="font-size:${bodySize};color:var(--text-secondary)">— ${escapeHtml(attr[1])}</cite>` : ''}
+                const src = content || body;
+                const m = src.match(/>\s*(.+)/);
+                const quote = m ? m[1] : src;
+                const attr = src.match(/—\s*(.+)/);
+                return `<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:${isFs ? '56px' : '40px'};text-align:center;position:relative;background:${gradientFor(idx)};overflow:hidden">
+                    <div style="position:absolute;top:${isFs ? '12px' : '4px'};left:${isFs ? '40px' : '24px'};font-size:${isFs ? '120px' : '80px'};line-height:1;color:color-mix(in srgb, var(--accent) 32%, transparent);font-family:Georgia,serif;user-select:none">"</div>
+                    <blockquote style="position:relative;z-index:1;font-size:${isFs ? '34px' : '22px'};font-style:italic;border:none;padding:0;color:var(--text-primary);margin:0 0 16px;max-width:78%;line-height:1.45">${escapeHtml(quote)}</blockquote>
+                    ${attr ? `<cite style="font-size:${bodySize};color:var(--text-secondary);font-style:normal">— ${escapeHtml(attr[1])}</cite>` : ''}
                 </div>`;
             }
             if (slide.layout === 'split') {
-                const leftMatch = body.match(/Left:\s*(.+?)(?=\n\s*Right:|$)/s);
-                const rightMatch = body.match(/Right:\s*(.+)$/s);
+                const leftMatch = content.match(/Left:\s*(.+?)(?=\n\s*Right:|$)/s);
+                const rightMatch = content.match(/Right:\s*(.+)$/s);
                 const left = leftMatch ? leftMatch[1].trim() : '';
                 const right = rightMatch ? rightMatch[1].trim() : '';
-                return `<div style="height:100%;padding:30px;display:flex;flex-direction:column">
-                    <h2 style="font-size:${isFs ? '32px' : '20px'};font-weight:600;margin-bottom:20px;color:var(--text-primary)">${escapeHtml(body.match(/^##\s+(.+)/m)?.[1] || '')}</h2>
-                    <div style="display:flex;gap:24px;flex:1">
-                        <div style="flex:1;padding:16px;background:var(--bg-sidebar);border-radius:10px;font-size:${bulletSize};line-height:1.6">${renderMarkdown(left)}</div>
-                        <div style="flex:1;padding:16px;background:var(--bg-sidebar);border-radius:10px;font-size:${bulletSize};line-height:1.6">${renderMarkdown(right)}</div>
+                const panelMd = (t) => renderMarkdown(t).replace(/<li/g, `<li style="font-size:${bulletSize};margin:6px 0;line-height:1.5"`).replace(/<p>/g, `<p style="font-size:${bodySize};margin:4px 0"`);
+                return `<div style="height:100%;padding:${isFs ? '36px' : '26px'};display:flex;flex-direction:column;position:relative">
+                    ${accentBar}
+                    <div style="padding-left:${isFs ? '22px' : '16px'};display:flex;flex-direction:column;flex:1;min-height:0">
+                        ${headHtml}
+                        <div style="display:flex;gap:${isFs ? 24 : 16}px;flex:1;min-height:0">
+                            <div style="flex:1;padding:${isFs ? '20px' : '16px'};background:color-mix(in srgb, var(--accent) 8%, var(--bg-sidebar));border:1px solid var(--border);border-radius:12px;font-size:${bulletSize};line-height:1.5;overflow:auto;min-width:0">${panelMd(left)}</div>
+                            <div style="flex:1;padding:${isFs ? '20px' : '16px'};background:var(--bg-sidebar);border:1px solid var(--border);border-radius:12px;font-size:${bulletSize};line-height:1.5;overflow:auto;min-width:0">${panelMd(right)}</div>
+                        </div>
                     </div>
+                </div>`;
+            }
+            if (slide.layout === 'stats') {
+                const statRe = /^[-*]\s+\*{2}(.+?)\*{2}\s*[:—-]\s+(.+)$/;
+                const stats = content.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+                    const sm = l.match(statRe);
+                    return sm ? { value: sm[1].trim(), label: sm[2].trim() } : { value: l.replace(/^[-*]\s+/, '').replace(/^\*{2}|\*{2}$/g, ''), label: '' };
+                }).filter(s => s.value);
+                return `<div style="height:100%;padding:${isFs ? '40px' : '28px'};display:flex;flex-direction:column;justify-content:center;position:relative">
+                    ${accentBar}
+                    <div style="padding-left:${isFs ? '24px' : '18px'}">
+                        ${headHtml}
+                        <div style="display:grid;grid-template-columns:repeat(${Math.min(stats.length || 1, 3)},1fr);gap:${isFs ? 20 : 14}px">
+                            ${stats.map(s => `<div style="background:var(--bg-sidebar);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;padding:${isFs ? '22px' : '16px'}">
+                                <div style="font-size:${isFs ? '40px' : '26px'};font-weight:800;color:var(--accent);line-height:1.1;letter-spacing:-0.02em">${escapeHtml(s.value)}</div>
+                                ${s.label ? `<div style="font-size:${isFs ? '16px' : '12px'};color:var(--text-secondary);margin-top:8px;line-height:1.4">${escapeHtml(s.label)}</div>` : ''}
+                            </div>`).join('')}
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (slide.layout === 'image') {
+                const imgMatch = content.match(/!\[[^\]]*\]\(([^)]+)\)/) || body.match(/!\[[^\]]*\]\(([^)]+)\)/);
+                const url = imgMatch ? imgMatch[1] : null;
+                const caption = content.replace(/!\[[^\]]*\]\([^)]+\)/, '').trim() || headingText;
+                const photo = photos && photoData && photoData[idx];
+                const src = photo ? photo.url : url;
+                if (src) {
+                    const attr = photo && photo.artist ? ` · ${photo.artist}` : '';
+                    return `<div style="height:100%;display:flex;flex-direction:column;position:relative;background:var(--bg-sidebar)">
+                        <div style="flex:1;min-height:0;background:url('${escapeHtml(src)}') center/cover no-repeat"></div>
+                        ${caption ? `<div style="padding:${isFs ? '20px' : '14px'};font-size:${bodySize};color:var(--text-primary);border-top:1px solid var(--border)">${escapeHtml(caption)}${attr ? `<span style="color:var(--text-secondary);font-size:${isFs ? 12 : 10}px">  ${escapeHtml(attr)}</span>` : ''}</div>` : ''}
+                    </div>`;
+                }
+                // Generated placeholder: gradient + topic icon in a circle + heading.
+                return `<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;background:${gradientFor(idx)};position:relative;overflow:hidden">
+                    <div style="width:${isFs ? '140px' : '96px'};height:${isFs ? '140px' : '96px'};border-radius:50%;background:color-mix(in srgb, var(--accent) 18%, var(--bg-elevated));display:flex;align-items:center;justify-content:center;font-size:${isFs ? '64px' : '44px'};margin-bottom:${isFs ? '28px' : '20px'};border:2px solid color-mix(in srgb, var(--accent) 40%, transparent)">${icon}</div>
+                    ${headingText ? `<div style="font-size:${headSize};font-weight:700;color:var(--text-primary);max-width:80%">${escapeHtml(headingText)}</div>` : ''}
+                    ${caption && caption !== headingText ? `<div style="font-size:${bodySize};color:var(--text-secondary);margin-top:8px;max-width:70%">${escapeHtml(caption)}</div>` : ''}
                 </div>`;
             }
             if (slide.layout === 'chart') {
                 const spec = extractChartSpec(body);
                 if (spec) {
-                    const title = spec.title || body.match(/^##\s+(.+)/m)?.[1] || '';
-                    return `<div style="height:100%;padding:20px;display:flex;flex-direction:column">
-                        <h2 style="font-size:${isFs ? '32px' : '20px'};font-weight:600;margin-bottom:12px;color:var(--text-primary)">${escapeHtml(title)}</h2>
-                        <div id="slideChartContainer" style="flex:1;min-height:200px"></div>
+                    const title = (spec && spec.title) || headingText || '';
+                    return `<div style="height:100%;padding:${isFs ? '32px' : '22px'};display:flex;flex-direction:column;position:relative">
+                        ${accentBar}
+                        <div style="padding-left:${isFs ? '22px' : '16px'};display:flex;flex-direction:column;flex:1;min-height:0">
+                            ${title ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:${isFs ? 16 : 12}px"><span style="font-size:${isFs ? 28 : 20}px">${icon}</span><h2 style="margin:0;font-size:${headSize};font-weight:700;color:var(--text-primary)">${escapeHtml(title)}</h2></div>` : ''}
+                            <div id="slideChartContainer" style="flex:1;min-height:200px;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:12px;padding:${isFs ? '20px' : '12px'}"></div>
+                        </div>
                     </div>`;
                 }
+                // spec missing — render as bullets so the slide isn't a blank chart frame.
+                return `<div style="height:100%;padding:${isFs ? '32px' : '26px'};display:flex;flex-direction:column;justify-content:center;position:relative">${accentBar}<div style="padding-left:${isFs ? 22 : 16}px">${headHtml}${renderMarkdown(content || body).replace(/<h2/g, `<h2 style="font-size:${headSize};font-weight:700;margin-bottom:12px;color:var(--text-primary)"`).replace(/<li/g, `<li style="font-size:${bulletSize};margin:7px 0;line-height:1.55"`).replace(/<p>/g, `<p style="font-size:${bodySize}">`)}</div></div>`;
             }
-            // Default: bullets
-            return `<div style="height:100%;padding:30px;display:flex;flex-direction:column;justify-content:center">
-                ${renderMarkdown(body).replace(/<h2/g, `<h2 style="font-size:${isFs ? '32px' : '20px'};font-weight:600;margin-bottom:16px;color:var(--text-primary)"`).replace(/<li/g, `<li style="font-size:${bulletSize};margin:8px 0;line-height:1.6"`).replace(/<p>/g, `<p style="font-size:${bodySize}">`)}
+            // Default: bullets (also catches any unmapped layout).
+            const md = renderMarkdown(content || body)
+                .replace(/<h3/g, `<h3 style="font-size:${isFs ? 22 : 14}px;font-weight:700;color:var(--accent);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.06em"`)
+                .replace(/<li/g, `<li style="font-size:${bulletSize};margin:7px 0;line-height:1.55"`)
+                .replace(/<p>/g, `<p style="font-size:${bodySize};line-height:1.6;margin:8px 0"`)
+                .replace(/<table/g, `<table style="width:100%;border-collapse:collapse;font-size:${isFs ? 18 : 13}px;margin:10px 0"`)
+                .replace(/<th/g, `<th style="text-align:left;padding:6px 8px;border-bottom:2px solid var(--accent);color:var(--text-primary)"`)
+                .replace(/<td/g, `<td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text-secondary)"`);
+            return `<div style="height:100%;padding:${isFs ? '40px' : '28px'};display:flex;flex-direction:column;justify-content:center;position:relative">
+                ${accentBar}
+                <div style="padding-left:${isFs ? '24px' : '18px'};display:flex;flex-direction:column;justify-content:center">
+                    ${headHtml}
+                    <div style="background:var(--bg-sidebar);border:1px solid var(--border);border-radius:12px;padding:${isFs ? '24px' : '16px'};overflow:auto;max-height:100%">${md}</div>
+                </div>
             </div>`;
         }
 
