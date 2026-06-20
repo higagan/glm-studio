@@ -2885,6 +2885,9 @@ Topic: ${t}`
                     ${downloadFormats.map(f => `<div class="ap-dropdown-item" onclick="downloadArtifact('${f.format}')">${f.icon} ${f.label}<span class="item-meta">${f.meta}</span></div>`).join('')}
                 </div>
             </div>`;
+            if (tab.type === 'slide_deck') {
+                html += `<label class="ap-tool-btn" style="display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none" title="Pull related Creative-Commons photos from Wikimedia (off by default; nothing else in GLM Studio touches the network)"><input type="checkbox" id="photosToggle" ${slidesPhotosEnabled ? 'checked' : ''} onchange="togglePhotos(this.checked)" style="margin:0;cursor:pointer">🖼️ Add photos</label>`;
+            }
             if (tab.versions.length > 1) {
                 html += `<div class="ap-dropdown">
                     <button class="ap-tool-btn" onclick="toggleVersionMenu()">⏱ v${panelViewingVersion || tab.version} ▾</button>
@@ -3232,8 +3235,10 @@ Topic: ${t}`
                 <div id="slideNotes" style="margin-top:10px;display:none;padding:10px 14px;background:var(--bg-sidebar);border:1px solid var(--border);border-radius:8px;font-size:13px;line-height:1.55;color:var(--text-secondary)"></div>`;
             el._slides = slides;
             el._currentSlide = 0;
+            el._photos = {};
             showSlide(0);
             renderSlideThumbs(slides);
+            hydrateSlidePhotos(el);
         }
 
         // Infer a layout from slide body content. The keyword form already names a
@@ -3257,9 +3262,101 @@ Topic: ${t}`
             return 'bullets';
         }
 
-        // Opt-in photo enrichment for slides (wired up in a later PR). Declared here
-        // so showSlide can reference it without throwing before the toggle exists.
-        let slidesPhotosEnabled = false;
+        // Opt-in photo enrichment for slides. Off by default — pulling real images is
+        // the one thing in this app that reaches the network, so it stays behind a
+        // toggle and degrades to the generated visuals when off, offline, or empty.
+        let slidesPhotosEnabled = (() => {
+            try {
+                if (new URLSearchParams(location.search).get('photos') === '1') return true;
+                return localStorage.getItem('glm-slides-photos') === '1';
+            } catch (e) { return false; }
+        })();
+        const PHOTO_LAYOUTS = ['title', 'section', 'image'];
+
+        function togglePhotos(on) {
+            slidesPhotosEnabled = !!on;
+            try { localStorage.setItem('glm-slides-photos', slidesPhotosEnabled ? '1' : '0'); } catch (e) {}
+            renderActiveTab();
+        }
+
+        // Turn a slide heading into a Commons search keyword: drop "Era N / Slide /
+        // Section / Part" counters and markdown noise, keep the first few words.
+        // Filler words are only dropped when they ARE the heading ("Thank You",
+        // "Overview") — not when they're part of a phrase like "Nivea Company Overview".
+        function photoKeyword(heading, deckTitle, layout) {
+            const FILLER = /^(overview|introduction|summary|conclusion|takeaways?|agenda|thank you|thanks?|questions?|q\s*&\s*a|title|contents?|background|the end)$/i;
+            const clean = (s) => (s || '')
+                .replace(/[#>*_`|—–-]/g, ' ')
+                .replace(/\b(era|slide|section|part|chapter)\s*\d+\b/gi, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            const take = (s) => s.split(' ').slice(0, 5).join(' ');
+            if (layout === 'title' || layout === 'section') {
+                const fromTitle = clean(deckTitle);
+                if (fromTitle && !FILLER.test(fromTitle.toLowerCase())) return take(fromTitle);
+            }
+            const h = clean(heading);
+            if (h && !FILLER.test(h.toLowerCase())) return take(h);
+            const dt = clean(deckTitle);
+            if (dt && !FILLER.test(dt.toLowerCase())) return take(dt);
+            return '';
+        }
+
+        // Pull a relevant, CC-licensed image from Wikimedia Commons — keyless, CORS via
+        // origin=*. Picks the first file result under a permissive license and forces
+        // https on the thumb so it loads on both the github.io https page and localhost.
+        // Caches results (including misses) in sessionStorage so a re-render is instant.
+        async function fetchPhoto(keyword) {
+            const cacheKey = 'glm-img:' + keyword;
+            try {
+                const cached = sessionStorage.getItem(cacheKey);
+                if (cached) return cached === 'miss' ? null : JSON.parse(cached);
+            } catch (e) {}
+            const api = 'https://commons.wikimedia.org/w/api.php';
+            const url = `${api}?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(keyword)}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1200`;
+            try {
+                const res = await fetch(url);
+                const json = await res.json();
+                const pages = (json.query && json.query.pages) ? Object.values(json.query.pages) : [];
+                const allowed = /CC0|Public Domain|CC BY(-SA|-ND)?|GFDL/i;
+                for (const p of pages) {
+                    const info = p.imageinfo && p.imageinfo[0];
+                    if (!info) continue;
+                    const lic = (info.extmetadata && info.extmetadata.LicenseShortName && info.extmetadata.LicenseShortName.value) || '';
+                    if (!allowed.test(lic)) continue;
+                    let thumb = info.thumburl || info.url;
+                    if (!thumb) continue;
+                    thumb = thumb.replace(/^http:\/\//i, 'https://');
+                    const artistRaw = (info.extmetadata && info.extmetadata.Artist && info.extmetadata.Artist.value) || '';
+                    const photo = { url: thumb, license: lic, artist: artistRaw.replace(/<[^>]+>/g, '').trim(), descUrl: info.descriptionurl || info.url || '' };
+                    try { sessionStorage.setItem(cacheKey, JSON.stringify(photo)); } catch (e) {}
+                    return photo;
+                }
+                try { sessionStorage.setItem(cacheKey, 'miss'); } catch (e) {}
+                return null;
+            } catch (e) {
+                return null; // offline / blocked — generated visual takes over
+            }
+        }
+
+        // Fetch photos for every photo-eligible slide in parallel, hydrating el._photos
+        // as each resolves and re-rendering the visible slide when its photo lands.
+        // Never blocks first paint — generated visuals show immediately, photos swap in.
+        function hydrateSlidePhotos(el) {
+            if (!slidesPhotosEnabled || !el._slides) return;
+            const slides = el._slides;
+            el._photos = el._photos || {};
+            slides.forEach((s, i) => {
+                if (!PHOTO_LAYOUTS.includes(s.layout) || el._photos[i]) return;
+                const kw = photoKeyword(s.heading, slides.deckTitle, s.layout);
+                if (!kw) return;
+                el._photos[i] = { __pending: true };
+                fetchPhoto(kw).then(photo => {
+                    el._photos[i] = photo ? photo : { __miss: true };
+                    if (el._currentSlide === i) showSlide(i);
+                });
+            });
+        }
 
         function parseSlides(content) {
             // Deck-level "# Title" before the first slide (plain-chat form). Stashed
@@ -3512,7 +3609,7 @@ Topic: ${t}`
                 const m = body.match(/^#\s+(.+)/m);
                 const title = m ? m[1] : headingText || body.split('\n')[0];
                 const subtitle = body.split('\n').slice(1).join('\n').trim().replace(/^##\s+/, '');
-                const photo = photos && photoData && photoData[idx];
+                const photo = (photos && photoData && photoData[idx] && photoData[idx].url) ? photoData[idx] : null;
                 const bg = photo
                     ? `linear-gradient(135deg, rgba(0,0,0,.58), rgba(0,0,0,.40)), url('${photo.url}') center/cover`
                     : gradientFor(idx);
@@ -3524,6 +3621,7 @@ Topic: ${t}`
                         <h1 style="font-size:${titleSize};font-weight:800;margin:0 0 14px;color:inherit;letter-spacing:-0.02em;line-height:1.1">${escapeHtml(title)}</h1>
                         ${subtitle ? `<p style="font-size:${bodySize};margin:0;color:${photo ? 'rgba(255,255,255,.85)' : 'var(--text-secondary)'}">${escapeHtml(subtitle)}</p>` : ''}
                     </div>
+                    ${photo && photo.artist ? `<div style="position:absolute;bottom:8px;right:10px;z-index:1;font-size:${isFs ? 11 : 9}px;color:rgba(255,255,255,.7);max-width:60%;text-align:right">📷 ${escapeHtml(photo.artist)} · ${escapeHtml(photo.license)}</div>` : ''}
                 </div>`;
             }
             if (slide.layout === 'section') {
@@ -3587,7 +3685,7 @@ Topic: ${t}`
                 const imgMatch = content.match(/!\[[^\]]*\]\(([^)]+)\)/) || body.match(/!\[[^\]]*\]\(([^)]+)\)/);
                 const url = imgMatch ? imgMatch[1] : null;
                 const caption = content.replace(/!\[[^\]]*\]\([^)]+\)/, '').trim() || headingText;
-                const photo = photos && photoData && photoData[idx];
+                const photo = (photos && photoData && photoData[idx] && photoData[idx].url) ? photoData[idx] : null;
                 const src = photo ? photo.url : url;
                 if (src) {
                     const attr = photo && photo.artist ? ` · ${photo.artist}` : '';
