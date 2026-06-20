@@ -18,6 +18,9 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        # Don't let the browser cache a stale index.html — always revalidate so
+        # edits show up on refresh instead of being served from disk cache.
+        self.send_header('Cache-Control', 'no-cache, must-revalidate')
         super().end_headers()
 
     def do_OPTIONS(self):
