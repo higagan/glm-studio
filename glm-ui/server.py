@@ -60,20 +60,30 @@ class Handler(SimpleHTTPRequestHandler):
                         pass
                 return
             except urllib.error.HTTPError as e:
-                # 4xx: client/request problem — don't retry, surface it.
-                # 5xx: upstream cloud-model hiccup — retry a couple of times.
-                last_err = f'upstream returned HTTP {e.code}'
+                # Capture Ollama's own error body so we surface the real reason.
+                upstream_body = ''
                 try:
-                    e.read()
+                    upstream_body = e.read().decode('utf-8', 'replace').strip()
                 except Exception:
                     pass
-                if e.code >= 500 and attempt < max_attempts:
+                last_err = f'upstream returned HTTP {e.code}: {upstream_body[:300]}'
+                # 5xx: upstream cloud hiccup — retry. 400: cloud models sometimes
+                # 400 transiently too, so give it one cheap retry before surfacing.
+                retryable = e.code >= 500 or e.code == 400
+                if retryable and attempt < max_attempts:
                     time.sleep(attempt)  # 1s, 2s backoff
                     continue
                 self.send_response(502)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
-                hint = ' (transient cloud-model error — please retry)' if e.code >= 500 else ' (check the model name in Settings)'
+                if e.code == 400:
+                    hint = ' — usually a bad request or a one-off cloud rejection'
+                elif e.code == 404:
+                    hint = ' — model not found, check the model name in Settings'
+                elif e.code >= 500:
+                    hint = ' — transient cloud-model error, please retry'
+                else:
+                    hint = ' — check Settings'
                 self.wfile.write(json.dumps({'error': f'Ollama {last_err}{hint}'}).encode())
                 return
             except (urllib.error.URLError, TimeoutError, OSError) as e:

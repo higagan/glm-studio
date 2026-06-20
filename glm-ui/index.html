@@ -1953,7 +1953,7 @@ Topic: ${t}`
                 if (!res.ok) {
                     let detail = '';
                     try { const j = await res.clone().json(); detail = j.error || ''; } catch (e) {}
-                    if (res.status >= 500) throw new Error(`The model is briefly unavailable (HTTP ${res.status}). ${detail}`.trim());
+                    if (res.status >= 500) throw new Error(detail || `The model is briefly unavailable (HTTP ${res.status}).`);
                     throw new Error(`HTTP ${res.status}: ${detail || res.statusText}`);
                 }
                 const reader = res.body.getReader();
