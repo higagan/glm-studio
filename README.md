@@ -7,10 +7,13 @@
 
 **Run GLM (and any Ollama model) locally, in a web UI that's actually nice to use.**
 
-> 🖼️ *TODO: drop a hero screenshot or short GIF here* — the app with a slide deck
-> rendered in the artifact panel and the **Export → .pptx** button visible. Capture it
-> locally (`python3 server.py`, open the sample deck), save as `docs/screenshot.png`,
-> then replace this block with `![GLM Studio](docs/screenshot.png)`.
+> 🖼️ **Hero screenshot coming.** Capture the app with a slide deck rendered in the
+> artifact panel and the **Export → .pptx** button visible — easiest is to run
+> `python3 server.py`, open `http://localhost:7860/?demo` (it seeds a sample deck), and
+> screenshot. Save it as `docs/screenshot.png` (or `docs/demo.gif` for a short animation),
+> then replace this whole block with:
+>
+> `![GLM Studio — a slide deck rendered in the artifact panel](docs/screenshot.png)`
 
 GLM Studio is a self-hosted web interface for chatting with a local GLM model through
 [Ollama](https://ollama.com) — no cloud, no API keys, no monthly bill, nothing leaving
