@@ -1624,14 +1624,52 @@ Topic: ${t}`
             for (const file of fileList) {
                 if (file.size > 5 * 1024 * 1024) { alert(`"${file.name}" is too large (max 5MB).`); continue; }
                 const isImage = file.type.startsWith('image/');
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    pendingAttachments.push({ name: file.name, type: file.type || 'unknown', size: file.size, content: e.target.result, isImage });
-                    renderAttachmentPreviews();
-                };
-                if (isImage) reader.readAsDataURL(file); else reader.readAsText(file);
+                if (isImage) {
+                    downscaleImage(file).then(dataUrl => {
+                        pendingAttachments.push({ name: file.name, type: file.type || 'image', size: file.size, content: dataUrl, isImage });
+                        renderAttachmentPreviews();
+                    }).catch(() => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => { pendingAttachments.push({ name: file.name, type: file.type || 'image', size: file.size, content: e.target.result, isImage }); renderAttachmentPreviews(); };
+                        reader.readAsDataURL(file);
+                    });
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        pendingAttachments.push({ name: file.name, type: file.type || 'unknown', size: file.size, content: e.target.result, isImage });
+                        renderAttachmentPreviews();
+                    };
+                    reader.readAsText(file);
+                }
             }
             document.getElementById('fileInput').value = '';
+        }
+
+        // Resize images down to a vision-friendly size before storing as base64.
+        // A full-res photo can be several MB of base64 (= millions of tokens), which
+        // blows the model's context window on every turn it's re-sent.
+        function downscaleImage(file, maxDim = 1280, quality = 0.85) {
+            return new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = () => {
+                    URL.revokeObjectURL(url);
+                    let { width, height } = img;
+                    if (width > maxDim || height > maxDim) {
+                        const scale = maxDim / Math.max(width, height);
+                        width = Math.max(1, Math.round(width * scale));
+                        height = Math.max(1, Math.round(height * scale));
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width; canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    const mime = (file.type === 'image/png') ? 'image/png' : 'image/jpeg';
+                    try { resolve(canvas.toDataURL(mime, quality)); }
+                    catch (e) { reject(e); }
+                };
+                img.onerror = (e) => { URL.revokeObjectURL(url); reject(e); };
+                img.src = url;
+            });
         }
         function renderAttachmentPreviews() {
             document.getElementById('attachmentPreviews').innerHTML = pendingAttachments.map((a, i) => {
@@ -1918,6 +1956,45 @@ Topic: ${t}`
             await streamAssistantReply();
         }
 
+        // Assemble the message array sent to Ollama, applying two safeguards:
+        //  - images attach only to the most recent user turn (not the whole history)
+        //  - the chat history is trimmed to a char budget, keeping the latest message
+        function buildApiMessages() {
+            const sys = { role: 'system', content: getSystemPrompt() };
+            let lastUserIdx = -1;
+            for (let i = currentChat.length - 1; i >= 0; i--) {
+                if (currentChat[i].role === 'user') { lastUserIdx = i; break; }
+            }
+            const chatMsgs = currentChat.map((m, i) => {
+                const msg = { role: m.role, content: m.apiContent || m.content };
+                if (m.attachments && m.attachments.length) {
+                    const images = m.attachments
+                        .filter(a => a.isImage && a.content)
+                        .map(a => a.content.includes(',') ? a.content.split(',')[1] : a.content);
+                    if (images.length && i === lastUserIdx) msg.images = images;
+                }
+                return msg;
+            });
+            return [sys, ...trimToBudget(chatMsgs)];
+        }
+
+        // Keep the latest message plus as many recent prior messages as fit under
+        // maxChars. If the latest message alone exceeds the budget, return as-is
+        // (the caller's size guard will surface a clear error instead of a 400).
+        function trimToBudget(msgs, maxChars = 1800000) {
+            if (!msgs.length) return msgs;
+            const last = msgs[msgs.length - 1];
+            const lastSize = JSON.stringify(last).length;
+            if (lastSize > maxChars) return msgs;
+            let kept = [last], total = lastSize;
+            for (let i = msgs.length - 2; i >= 0; i--) {
+                const s = JSON.stringify(msgs[i]).length;
+                if (total + s > maxChars) break;
+                kept.unshift(msgs[i]); total += s;
+            }
+            return kept;
+        }
+
         // Streams a fresh assistant reply for the current conversation (whose last
         // entry must be a user message). Shared by send / regenerate / edit-resend / retry.
         async function streamAssistantReply() {
@@ -1933,18 +2010,16 @@ Topic: ${t}`
             abortController = new AbortController();
             let fullContent = '', fullThinking = '', hasContent = false;
             try {
-                // Build messages with images for Ollama vision API
-                const messages = [{ role: 'system', content: getSystemPrompt() }, ...currentChat.map(m => {
-                    const msg = { role: m.role, content: m.apiContent || m.content };
-                    if (m.attachments && m.attachments.length) {
-                        const images = m.attachments.filter(a => a.isImage && a.content).map(a => {
-                            const base64 = a.content.includes(',') ? a.content.split(',')[1] : a.content;
-                            return base64;
-                        });
-                        if (images.length) msg.images = images;
-                    }
-                    return msg;
-                })];
+                // Build messages for Ollama. Images are attached only to the most
+                // recent user turn (older images would be re-sent every turn and
+                // blow the context window), and the whole payload is capped to a
+                // char budget so long conversations / big attachments don't 400.
+                const messages = buildApiMessages();
+                const payloadSize = JSON.stringify({ model: selectedModel, messages, stream: true }).length;
+                const MAX_PAYLOAD_CHARS = 2000000; // ~500k tokens, safely under the 1M-token limit
+                if (payloadSize > MAX_PAYLOAD_CHARS) {
+                    throw new Error(`This conversation is too large for the model (${(payloadSize/1000000).toFixed(1)}M chars). Start a new chat, or remove a large file attachment and retry.`);
+                }
                 const res = await fetch(`${OLLAMA_HOST}/api/chat`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ model: selectedModel, messages, stream: true }),
