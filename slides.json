@@ -1,0 +1,240 @@
+{
+  "deck": {
+    "title": "Evolution of Indian Television Shows — From Doordarshan to OTT",
+    "theme": {
+      "accent_color": "#D97757",
+      "secondary_accent": "#1F3A5F",
+      "fonts": { "headings": "Inter", "body": "Inter", "mono": "JetBrains Mono" },
+      "tone": "editorial, warm, nostalgic-to-modern arc"
+    },
+    "slides": [
+      {
+        "slide_type": "title",
+        "title": "From Doordarshan to OTT",
+        "subtitle": "The Evolution of Indian Television Shows",
+        "key_points": [
+          "Six decades of storytelling on screen",
+          "1959 → 2025: one channel to a thousand platforms",
+          "How India watches, and what it watches, transformed"
+        ],
+        "visual_hint": "Split-screen collage: a vintage CRT TV showing Doordarshan's 'DD National' logo on the left, dissolving into a modern smartphone streaming an OTT app on the right; subtle film-grain texture",
+        "layout_hint": "full-bleed hero, title bottom-left over darkened image, accent rule line",
+        "emphasis": { "title": "bold", "accent_rule": true, "year_range": "1959–2025 as large muted numerals in background" }
+      },
+      {
+        "slide_type": "agenda",
+        "title": "Agenda",
+        "subtitle": "The journey across three eras",
+        "key_points": [
+          "Era 1 — Doordarshan: the monopoly years (1959–1990s)",
+          "Era 2 — Cable & Satellite: the explosion (1990s–2000s)",
+          "Era 3 — Digital & OTT: the unbundling (2010s–present)",
+          "What changed for audiences, creators & business",
+          "Takeaways & Q&A"
+        ],
+        "visual_hint": "Three numbered icon cards in a row: vintage TV, satellite dish, play button on a phone — connected by a thin progress line",
+        "layout_hint": "3-column icon row, top; agenda list below",
+        "emphasis": { "numbers": "accent_color", "era_labels": "bold" }
+      },
+      {
+        "slide_type": "section_divider",
+        "title": "Era 1 — The Doordarshan Years",
+        "subtitle": "1959–1990s · One nation, one channel",
+        "key_points": [
+          "State-owned broadcasting",
+          "Limited hours, shared viewing",
+          "Culture-defining shows"
+        ],
+        "visual_hint": "Full-bleed retro texture with a single CRT television silhouette glowing in the center; muted sepia palette",
+        "layout_hint": "centered title, large era numeral '01' as background watermark",
+        "emphasis": { "era_numeral": "giant, low-opacity background", "title": "bold" }
+      },
+      {
+        "slide_type": "text_image",
+        "title": "Birth of Doordarshan",
+        "subtitle": "Television arrives in India",
+        "key_points": [
+          "1959 — Experimental telecast from Delhi",
+          "1976 — Doordarshan separates from All India Radio",
+          "1982 — Asian Games spark color TV & national expansion",
+          "One channel, evening-only slots, communal viewing",
+          "Shows became shared national rituals"
+        ],
+        "visual_hint": "Left: archival photo of an early DD broadcast / families gathered around a TV. Right: small inset of the classic DD logo",
+        "layout_hint": "left-right (image 55% / text 45%)",
+        "emphasis": { "years": "accent_color bold", "1982": "callout pill" }
+      },
+      {
+        "slide_type": "timeline",
+        "title": "Doordarshan Milestones",
+        "subtitle": "The shows that defined a generation",
+        "key_points": [
+          "1976 — Doordarshan established",
+          "1982 — Color broadcast; Asian Games",
+          "1984–86 — Hum Log, Buniyaad (first soaps)",
+          "1986 — Mahabharat — Sunday morning phenomenon",
+          "1989 — Ramayan — streets would empty during airtime"
+        ],
+        "visual_hint": "Horizontal timeline ribbon with milestone nodes; each node carries a small show title card / thumbnail",
+        "layout_hint": "horizontal timeline across full width, single row of nodes",
+        "emphasis": { "milestone_years": "bold", "Mahabharat & Ramayan": "accent callout nodes" }
+      },
+      {
+        "slide_type": "stats",
+        "title": "The DD Phenomenon",
+        "subtitle": "One screen, a nation glued",
+        "key_points": [
+          "~1 channel available for most households through the 80s",
+          "Ramayan (1987) — among most-watched shows globally at the time",
+          "Broadcast windows: evening slots only; no 24×7 TV",
+          "TV ownership grew from thousands to millions in the 80s",
+          "Content was family-viewing by necessity — appointment TV"
+        ],
+        "visual_hint": "Stat grid: 3 large numeric tiles with captions + a simple line chart showing TV household growth 1980→1990",
+        "layout_hint": "3-column stat tiles on top, mini-chart strip below",
+        "emphasis": { "big_numbers": "oversized accent numerals", "Ramayan stat": "highlight tile" }
+      },
+      {
+        "slide_type": "section_divider",
+        "title": "Era 2 — Cable & Satellite",
+        "subtitle": "1990s–2000s · The channel explosion",
+        "key_points": [
+          "Private broadcasters arrive",
+          "Choice, genres and daily soaps multiply",
+          "TV becomes a 24-hour, multi-language medium"
+        ],
+        "visual_hint": "Full-bleed image of a wall of TV screens / a cable dish skyline; shift to cooler, more saturated palette",
+        "layout_hint": "centered title, era numeral '02' watermark",
+        "emphasis": { "era_numeral": "giant background watermark", "title": "bold" }
+      },
+      {
+        "slide_type": "comparison",
+        "title": "Doordarshan vs The Cable Era",
+        "subtitle": "Two models of television",
+        "key_points": [
+          "Ownership: state monopoly → private + multi-broadcaster",
+          "Channels: 1–2 → hundreds, across languages",
+          "Scheduling: fixed evening slots → 24×7 programming",
+          "Genres: myth/soap/social → soaps, reality, news, music, kids",
+          "Audience: shared national viewing → fragmented, segmented"
+        ],
+        "visual_hint": "Two-column comparison table with a center divider; left column tinted sepia, right column tinted blue",
+        "layout_hint": "2-column table, header row + 5 attribute rows",
+        "emphasis": { "column_headers": "bold accent", "contrast_rows": "alternating subtle fill" }
+      },
+      {
+        "slide_type": "text_image",
+        "title": "Soaps, Stars & Sunday Blockbusters",
+        "subtitle": "The daily-fiction + reality boom",
+        "key_points": [
+          "Kyunki Saas Bhi Kabhi Bahu Thi (2000) — era-defining daily soap",
+          "Kaun Banega Crorepati (2000) — reality/gameshow goes primetime",
+          "Indian idol, MTV, Channel V — youth & music programming",
+          "TRP race begins: ratings drive scheduling & budgets",
+          "Star, Zee, Sony, Colors reshape the competitive landscape"
+        ],
+        "visual_hint": "Collage strip: soap set still, KBC hot-seat, music countdown graphics — three thumbnails in a row",
+        "layout_hint": "top: 3-image collage row; bottom: text bullets in single column",
+        "emphasis": { "KBC 2000": "accent callout", "TRP": "bold inline tag" }
+      },
+      {
+        "slide_type": "quote",
+        "title": "Appointment Viewing",
+        "subtitle": null,
+        "key_points": [
+          "\"In the cable era, families planned their evenings around the 9 PM soap.\""
+        ],
+        "visual_hint": "Full-bleed dimmed image of a living room around a CRT TV; large pull-quote centered, oversized opening quotation mark in accent color",
+        "layout_hint": "full-bleed quote, centered, minimal text",
+        "emphasis": { "quote_text": "large serif, high contrast", "quotation_mark": "oversized accent" }
+      },
+      {
+        "slide_type": "section_divider",
+        "title": "Era 3 — Digital & OTT",
+        "subtitle": "2010s–present · The unbundling of TV",
+        "key_points": [
+          "Internet and smartphones reach mass scale",
+          "Streaming platforms disaggregate the 'channel'",
+          "Binge, originals, regional and global content mix"
+        ],
+        "visual_hint": "Full-bleed image of a smartphone + laptop streaming grid of show thumbnails; vibrant modern palette",
+        "layout_hint": "centered title, era numeral '03' watermark",
+        "emphasis": { "era_numeral": "giant background watermark", "title": "bold" }
+      },
+      {
+        "slide_type": "stats",
+        "title": "The Streaming Surge",
+        "subtitle": "India goes online, on-demand",
+        "key_points": [
+          "500M+ internet users in India by mid-2020s",
+          "Dozens of OTT platforms: Hotstar/JioHotstar, Netflix, Prime, ZEE5, SonyLIV, MX Player & more",
+          "Cheap mobile data: among the lowest rates globally → mass streaming",
+          "Originals & regional content expand sharply",
+          "Linear TV still large, but growth shifts to digital"
+        ],
+        "visual_hint": "Dashboard: big-number tiles + a bar chart of digital viewership growth 2015→2025; small platform logos row",
+        "layout_hint": "top: 3 stat tiles; middle: bar chart; bottom: logo strip",
+        "emphasis": { "500M+": "oversized accent numeral", "platform_logos": "muted monochrome row" }
+      },
+      {
+        "slide_type": "comparison",
+        "title": "Linear TV vs OTT",
+        "subtitle": "Two ways to watch",
+        "key_points": [
+          "Access: scheduled broadcast → on-demand streaming",
+          "Device: living-room TV → phone, tablet, laptop, TV",
+          "Model: channel bundle → subscription + freemium + AVOD",
+          "Content: censored, family-safe → originals, mature, regional, global",
+          "Control: broadcaster decides → viewer decides (pause, binge, skip)"
+        ],
+        "visual_hint": "Side-by-side comparison table; left column 'Linear TV' with TV icon, right 'OTT' with play icon; center arrow showing the shift",
+        "layout_hint": "2-column table with a directional arrow motif between headers",
+        "emphasis": { "headers": "bold with icon", "viewer_decides": "accent highlight cell" }
+      },
+      {
+        "slide_type": "timeline",
+        "title": "The Full Arc, 1959 → 2025",
+        "subtitle": "Six decades on a single ribbon",
+        "key_points": [
+          "1959 — First experimental telecast",
+          "1982 — Color TV & Asian Games",
+          "1992–95 — Cable & satellite channels launch (Zee, Star, Sony)",
+          "2000 — Daily soaps + KBC redefine primetime",
+          "2015–20 — Mobile data + OTT platforms explode",
+          "2020s — Streaming originals, regional wave, live sports on OTT"
+        ],
+        "visual_hint": "Long horizontal timeline spanning the full slide; era bands color-coded (sepia → blue → vibrant); milestone markers with mini icons",
+        "layout_hint": "full-width horizontal timeline, three era bands shaded beneath",
+        "emphasis": { "era_bands": "color-coded shading", "milestone_years": "bold accent dots" }
+      },
+      {
+        "slide_type": "summary",
+        "title": "Conclusion",
+        "subtitle": "What the evolution tells us",
+        "key_points": [
+          "From scarcity to abundance: one channel to infinite choice",
+          "From appointment viewing to on-demand control",
+          "From national consensus to fragmented, personal taste",
+          "From state gatekeeper to creator-led & platform-led economy",
+          "Constant: storytelling remains central — the screen just changed"
+        ],
+        "visual_hint": "Three-era mini-icons in a row (CRT → dish → phone) with a connecting arrow ending in a forward-pointing chevron; clean light background",
+        "layout_hint": "top: icon progression; bottom: takeaway list",
+        "emphasis": { "constant_line": "accent callout box", "takeaway_verbs": "bold lead words" }
+      },
+      {
+        "slide_type": "qa",
+        "title": "Questions & Discussion",
+        "subtitle": "Thank you",
+        "key_points": [
+          "Which era's shows shaped you most?",
+          "Where does Indian TV go next — AI, interactive, regional-first?",
+          "Open floor for questions"
+        ],
+        "visual_hint": "Minimal full-bleed with a large accent question-mark graphic and contact/handle line at the bottom",
+        "layout_hint": "centered title, large 'Q?' graphic, footer line",
+        "emphasis": { "question_mark": "oversized accent", "thank_you": "muted secondary" }
+      }
+    ]
+  }
+}
