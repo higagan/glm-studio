@@ -3152,11 +3152,50 @@ Topic: ${t}`
             showSlide(document.getElementById('apPreview')._currentSlide);
         }
 
+        // Local models often drop or swap a closing bracket in chart JSON —
+        // e.g. "data":[1,2,3} instead of "data":[1,2,3]. Walk the string and, for
+        // any closer that doesn't match the opener on top of the stack, substitute
+        // the expected one; then close anything still open. Best-effort: only used
+        // as a fallback when strict JSON.parse fails, so well-formed JSON is untouched.
+        function repairJSON(str) {
+            let out = '';
+            const stack = []; // expected closer for each opener still open
+            let inStr = false, esc = false;
+            for (let i = 0; i < str.length; i++) {
+                const c = str[i];
+                if (inStr) {
+                    out += c;
+                    if (esc) esc = false;
+                    else if (c === '\\') esc = true;
+                    else if (c === '"') inStr = false;
+                    continue;
+                }
+                if (c === '"') { inStr = true; out += c; continue; }
+                if (c === '{') { stack.push('}'); out += c; continue; }
+                if (c === '[') { stack.push(']'); out += c; continue; }
+                if (c === '}' || c === ']') {
+                    const expect = stack.pop();
+                    if (!expect) continue;                     // stray closer, nothing open — drop it
+                    out += (c === expect) ? c : expect;        // wrong shape → use the one the stack wants
+                    continue;
+                }
+                out += c;
+            }
+            while (stack.length) out += stack.pop();           // close openers left dangling
+            return out;
+        }
+
         // Pull a chart spec out of a chart slide's body, tolerating models that omit
-        // the ```chart fences and just dump the JSON object raw.
+        // the ```chart fences and just dump the JSON object raw, and models that
+        // mangle the JSON's bracket nesting (recovered via repairJSON above).
         function extractChartSpec(body) {
             const fenced = body.match(/```chart\s*\n([\s\S]*?)```/);
-            if (fenced) { try { return JSON.parse(fenced[1].trim()); } catch (e) {} }
+            if (fenced) {
+                const raw = fenced[1].trim();
+                try { return JSON.parse(raw); } catch (e) {
+                    try { return JSON.parse(repairJSON(raw)); } catch (e2) {}
+                }
+            }
             const start = body.indexOf('{');
             if (start !== -1) {
                 let depth = 0, end = -1, inStr = false, esc = false;
@@ -3171,7 +3210,10 @@ Topic: ${t}`
                     else if (c === '}') { depth--; if (depth === 0) { end = i; break; } }
                 }
                 if (end !== -1) {
-                    try { const s = JSON.parse(body.slice(start, end + 1)); if (s && s.chart_type) return s; } catch (e) {}
+                    const span = body.slice(start, end + 1);
+                    try { const s = JSON.parse(span); if (s && s.chart_type) return s; } catch (e) {
+                        try { const s = JSON.parse(repairJSON(span)); if (s && s.chart_type) return s; } catch (e2) {}
+                    }
                 }
             }
             return null;
@@ -3203,8 +3245,8 @@ Topic: ${t}`
                 </div>`;
             }
             if (slide.layout === 'split') {
-                const leftMatch = body.match(/Left:\s*\*?\*?(.+?)(?=\n\s*Right:|$)/s);
-                const rightMatch = body.match(/Right:\s*\*?\*?(.+)$/s);
+                const leftMatch = body.match(/Left:\s*(.+?)(?=\n\s*Right:|$)/s);
+                const rightMatch = body.match(/Right:\s*(.+)$/s);
                 const left = leftMatch ? leftMatch[1].trim() : '';
                 const right = rightMatch ? rightMatch[1].trim() : '';
                 return `<div style="height:100%;padding:30px;display:flex;flex-direction:column">
@@ -3227,7 +3269,7 @@ Topic: ${t}`
             }
             // Default: bullets
             return `<div style="height:100%;padding:30px;display:flex;flex-direction:column;justify-content:center">
-                ${renderMarkdown(body).replace(/<h2/g, `<h2 style="font-size:${isFs ? '32px' : '20px'};font-weight:600;margin-bottom:16px;color:var(--text-primary)"`).replace(/<li/g, `<li style="font-size:${bulletSize};margin:8px 0;line-height:1.6"`).replace(/<p/g, `<p style="font-size:${bodySize}"`)}
+                ${renderMarkdown(body).replace(/<h2/g, `<h2 style="font-size:${isFs ? '32px' : '20px'};font-weight:600;margin-bottom:16px;color:var(--text-primary)"`).replace(/<li/g, `<li style="font-size:${bulletSize};margin:8px 0;line-height:1.6"`).replace(/<p>/g, `<p style="font-size:${bodySize}">`)}
             </div>`;
         }
 
