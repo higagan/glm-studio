@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Simple HTTP server to serve the GLM Studio UI with Ollama proxy."""
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-import urllib.request
+import urllib.request, urllib.error
 import json
+import time
 import os, sys, socket
 
 PORT = 7860
@@ -24,7 +25,7 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
 
     def _proxy_to_ollama(self, path):
-        """Forward request to Ollama API."""
+        """Forward request to Ollama API, retrying transient upstream failures."""
         target_url = f"{OLLAMA_HOST}{path}"
         content_length = int(self.headers.get('Content-Length', 0))
         body = self.rfile.read(content_length) if content_length > 0 else None
@@ -36,23 +37,56 @@ class Handler(SimpleHTTPRequestHandler):
             method=self.command
         )
 
-        try:
-            with urllib.request.urlopen(req) as resp:
-                self.send_response(resp.status)
-                for key, val in resp.headers.items():
-                    if key.lower() not in ('transfer-encoding', 'content-encoding'):
-                        self.send_header(key, val)
+        max_attempts = 3
+        last_err = None
+        for attempt in range(1, max_attempts + 1):
+            try:
+                with urllib.request.urlopen(req, timeout=180) as resp:
+                    # Got a clean upstream response — stream it straight through.
+                    self.send_response(resp.status)
+                    for key, val in resp.headers.items():
+                        if key.lower() not in ('transfer-encoding', 'content-encoding'):
+                            self.send_header(key, val)
+                    self.end_headers()
+                    try:
+                        while True:
+                            chunk = resp.read(8192)
+                            if not chunk:
+                                break
+                            self.wfile.write(chunk)
+                            self.wfile.flush()
+                    except (BrokenPipeError, ConnectionResetError):
+                        # Client disconnected mid-stream (e.g. user hit Stop) — stop quietly.
+                        pass
+                return
+            except urllib.error.HTTPError as e:
+                # 4xx: client/request problem — don't retry, surface it.
+                # 5xx: upstream cloud-model hiccup — retry a couple of times.
+                last_err = f'upstream returned HTTP {e.code}'
+                try:
+                    e.read()
+                except Exception:
+                    pass
+                if e.code >= 500 and attempt < max_attempts:
+                    time.sleep(attempt)  # 1s, 2s backoff
+                    continue
+                self.send_response(502)
+                self.send_header('Content-Type', 'application/json')
                 self.end_headers()
-                while True:
-                    chunk = resp.read(8192)
-                    if not chunk:
-                        break
-                    self.wfile.write(chunk)
-        except Exception as e:
-            self.send_response(502)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps({'error': str(e)}).encode())
+                hint = ' (transient cloud-model error — please retry)' if e.code >= 500 else ' (check the model name in Settings)'
+                self.wfile.write(json.dumps({'error': f'Ollama {last_err}{hint}'}).encode())
+                return
+            except (urllib.error.URLError, TimeoutError, OSError) as e:
+                # Connection refused / timeout / network blip — retry.
+                last_err = str(e.reason if hasattr(e, 'reason') else e)
+                if attempt < max_attempts:
+                    time.sleep(attempt)
+                    continue
+                self.send_response(502)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'error': f'Cannot reach Ollama at {OLLAMA_HOST}: {last_err}. Is it running?'}).encode())
+                return
 
     def do_GET(self):
         if self.path.startswith('/api/'):

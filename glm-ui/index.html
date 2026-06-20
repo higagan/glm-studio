@@ -1950,7 +1950,12 @@ Topic: ${t}`
                     body: JSON.stringify({ model: selectedModel, messages, stream: true }),
                     signal: abortController.signal
                 });
-                if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                if (!res.ok) {
+                    let detail = '';
+                    try { const j = await res.clone().json(); detail = j.error || ''; } catch (e) {}
+                    if (res.status >= 500) throw new Error(`The model is briefly unavailable (HTTP ${res.status}). ${detail}`.trim());
+                    throw new Error(`HTTP ${res.status}: ${detail || res.statusText}`);
+                }
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
@@ -2012,7 +2017,7 @@ Topic: ${t}`
                     console.error('Generation error:', e);
                     const body = document.getElementById(`body-${msgId}`);
                     if (body) {
-                        body.innerHTML = `<div class="error-block"><span class="error-icon">⚠️</span> Generation failed: ${escapeHtml(e.message)}<br><button class="retry-btn" onclick="retryMessage('${msgId}')">Retry</button></div>`;
+                        body.innerHTML = `<div class="error-block"><span class="error-icon">⚠️</span> Generation failed: ${escapeHtml(e.message)}<br><span style="font-size:12px;color:var(--text-tertiary)">Cloud models occasionally hiccup — a retry usually works.</span><br><button class="retry-btn" onclick="retryMessage('${msgId}')">Retry</button></div>`;
                     }
                 }
             } finally {
