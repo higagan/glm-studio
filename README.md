@@ -1,13 +1,35 @@
 # GLM Studio
 
-A single-file web UI for talking to a local GLM model through [Ollama](https://ollama.com),
-with a built-in artifact panel that renders whatever the model produces — charts,
-spreadsheets, slide decks, flashcards, tables, documents and code. No build step, no
-frameworks, no `node_modules`. Just one `index.html` and a small Python proxy.
+**Run GLM (and any Ollama model) locally, in a web UI that's actually nice to use.**
 
-It started as a way to play with `glm-5.2:cloud` and grew into a lightweight content tool:
-ask for a slide deck and get a real `.pptx`, ask for flashcards and get a flippable deck,
-ask for a chart and get it rendered inline.
+GLM Studio is a self-hosted web interface for chatting with a local GLM model through
+[Ollama](https://ollama.com) — no cloud, no API keys, no monthly bill, nothing leaving
+your machine. It works with anything Ollama can run (`glm-5.2:cloud`, `llama3`, `qwen`,
+etc.), but it's built around GLM and tuned to make the most of what that family is good at:
+long-form, structured, content-shaped output.
+
+### Why this UI
+
+Ollama ships with a basic terminal prompt. That's fine for a quick question, but the
+moment you ask a model for something richer — a deck, a chart, a set of flashcards, a
+report — raw text in a terminal is the wrong tool. GLM Studio gives that output a real
+home:
+
+- **An artifact panel** that detects what the model produced and renders it properly —
+  charts plot, spreadsheets become editable grids, slide decks paginate with speaker
+  notes, flashcards flip, tables and documents get formatted. You don't read a wall of
+  markdown, you get the thing.
+- **One-click export to real files** — slide decks to a native, editable `.pptx` (with
+  live PowerPoint charts), spreadsheets to `.xlsx`, tables to `.csv`, documents to PDF.
+  The model's output becomes a file you can actually hand to someone.
+- **A content creator** — pick a target (notes, study guide, flashcards, slide deck,
+  comparison table, timeline, chart, summary) and the UI steers the model toward that
+  format, so you get a usable artifact instead of a generic essay.
+- **A clean, fast, single-file app** — no build step, no frameworks, no `node_modules`.
+  One `index.html` plus a ~140-line Python proxy. Clone it, run it, you're in.
+
+Think of it as a lightweight, local-first alternative to a hosted AI writing deck — but
+it runs on your laptop, talks to your own model, and exports files you own.
 
 ## Quick start
 
