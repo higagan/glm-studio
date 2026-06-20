@@ -21,6 +21,30 @@ your machine. It works with anything Ollama can run (`glm-5.2:cloud`, `llama3`, 
 etc.), but it's built around GLM and tuned to make the most of what that family is good at:
 long-form, structured, content-shaped output.
 
+## Try it (two ways, no install of this app needed)
+
+**1. In your browser, against your own Ollama.** Open the
+[live demo](https://higagan.github.io/glm-studio/), click the gear → **Ollama URL**, and
+paste `http://localhost:11434`. The page calls your Ollama directly — nothing in between.
+Ollama just needs to allow web pages to reach it, so start it once with CORS on:
+
+```bash
+OLLAMA_ORIGINS=* ollama serve
+```
+
+(The demo loads with a sample slide deck so you can see the artifact panel render even
+before you connect. Works in Chrome/Edge/Firefox; `http://localhost` is allowed from the
+HTTPS page. For an Ollama on another machine over plain `http://`, use the launcher below
+— the browser blocks cross-machine `http://` from an HTTPS page.)
+
+**2. One click, fully local.** If you've cloned the repo, double-click the launcher for
+your OS — it sets `OLLAMA_ORIGINS=*`, starts Ollama and the UI, and opens the browser. No
+terminal, no CORS to think about:
+
+- **macOS:** `start.command`
+- **Windows:** `start.bat`
+- **Linux:** `./start.sh`
+
 ### Why this UI
 
 Ollama ships with a basic terminal prompt. That's fine for a quick question, but the
@@ -58,6 +82,9 @@ it runs on your laptop, talks to your own model, and exports files you own.
   your machine. You also own the model and the output files.
 
 ## Quick start
+
+Easiest: double-click `start.command` / `start.bat` / `start.sh` (see above) — it does
+this for you. Manually:
 
 ```bash
 python3 server.py
@@ -171,6 +198,7 @@ A few things worth doing next — feedback and PRs welcome:
 ```
 index.html        # the whole UI — HTML, CSS and JS in one file
 server.py         # static file server + /api/* proxy to Ollama
+start.command / start.bat / start.sh   # one-click launchers (macOS / Windows / Linux)
 Dockerfile
 compose.yaml
 *.md              # design docs that drove the build (ARCHITECTURE, DESIGN-SPEC, …)
@@ -179,6 +207,10 @@ indian-tv-slides.md, slides.json, view-slides.html   # a sample deck
 
 ## Troubleshooting
 
+- **"Couldn't reach Ollama" on the hosted demo** — Ollama isn't running with browser
+  access. Start it with `OLLAMA_ORIGINS=* ollama serve`, then re-test the URL in Settings.
+  Works for `http://localhost` in Chrome/Edge/Firefox; for an Ollama on another machine,
+  use the local launcher (the browser blocks cross-machine `http://` from an HTTPS page).
 - **`HTTP 400 — prompt is too long`** — the conversation + images exceeded the model's
   context window. Start a new chat, or the downscaler should keep image attachments small.
 - **`HTTP 502` / transient 5xx** — the proxy retries once or twice; cloud models

@@ -1051,6 +1051,18 @@
                     </div>
                 </div>
                 <div class="settings-section">
+                    <h3>Connection</h3>
+                    <div class="settings-field">
+                        <label>Ollama URL</label>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <input type="text" id="settingsOllamaUrl" placeholder="http://localhost:11434" style="flex:1">
+                            <button class="ap-tool-btn" id="settingsTestConn" onclick="testConnection()" style="white-space:nowrap">Test</button>
+                        </div>
+                        <div class="hint" id="connHint">Leave blank to use the bundled proxy (works when running <code>python3 server.py</code> locally). On the hosted demo, paste your Ollama URL to chat — Ollama needs CORS on: run <code>OLLAMA_ORIGINS=* ollama serve</code>.</div>
+                        <div class="hint" id="connResult" style="margin-top:6px"></div>
+                    </div>
+                </div>
+                <div class="settings-section">
                     <h3>System Prompt</h3>
                     <div class="settings-field">
                         <label>Custom system prompt</label>
@@ -1145,15 +1157,72 @@ Notes: Linger on this one — the 9 PM soap was the social glue of the household
       #demoBanner a { color:#d97757; text-decoration:none; margin-left:6px; font-weight:600; }
       #demoBanner a:hover { text-decoration:underline; }
       body.demo-on { padding-top:34px; }
+      /* Connect-your-Ollama card — shown when no backend is reachable and no URL is set. */
+      #connectBackdrop { display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,.45);
+        align-items:center; justify-content:center; }
+      #connectBackdrop.show { display:flex; }
+      #connectCard { width:min(440px,92vw); background:var(--bg,#1f1e1d); border:1px solid var(--border,#3a3835);
+        border-radius:14px; padding:24px; box-shadow:0 12px 40px rgba(0,0,0,.4); color:var(--text,#f5f3ef);
+        font:14px/1.5 system-ui,-apple-system,sans-serif; max-height:88vh; overflow:auto; }
+      #connectCard h2 { margin:0 0 6px; font-size:18px; }
+      #connectCard p { margin:0 0 12px; color:var(--text-secondary,#b8b3aa); }
+      #connectCard .step { margin:14px 0; }
+      #connectCard .step b { color:var(--text,#f5f3ef); }
+      #connectCard .code { display:flex; align-items:center; gap:8px; background:rgba(217,119,87,.10);
+        border:1px solid rgba(217,119,87,.25); border-radius:8px; padding:8px 10px; margin:6px 0;
+        font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:#d97757; }
+      #connectCard .code code { flex:1; white-space:pre-wrap; word-break:break-all; }
+      #connectCard input { width:100%; box-sizing:border-box; padding:9px 11px; border-radius:8px;
+        border:1px solid var(--border,#3a3835); background:var(--bg-input,#262524); color:var(--text,#f5f3ef);
+        font:14px system-ui,-apple-system,sans-serif; }
+      #connectCard .row { display:flex; gap:8px; align-items:center; }
+      #connectCard .row input { flex:1; }
+      #connectCard button.primary { background:#d97757; color:#fff; border:none; border-radius:8px;
+        padding:9px 16px; font-weight:600; cursor:pointer; white-space:nowrap; }
+      #connectCard button.primary:hover { background:#c96a4d; }
+      #connectCard .ghost { background:none; border:none; color:var(--text-secondary,#b8b3aa);
+        cursor:pointer; font-size:13px; padding:6px 0; }
+      #connectCard .ghost:hover { color:var(--text,#f5f3ef); }
+      #connectCard .x { position:absolute; }
+      #connectCard .small { font-size:12.5px; color:var(--text-tertiary,#8a857d); margin-top:10px; }
+      #connectCard #connMsg { font-size:13px; margin-top:8px; min-height:18px; }
     </style>
     <div id="demoBanner">
-      <strong>Static demo</strong> — this is the real UI, read-only on GitHub Pages.
-      Chat needs Ollama running locally: clone the repo and run <code>python3 server.py</code>.
+      <strong>Hosted demo</strong> — chat with your own Ollama from this page: open <a href="#" onclick="openSettings();return false">Settings → Ollama URL</a> and paste <code>http://localhost:11434</code> (run Ollama with <code>OLLAMA_ORIGINS=*</code>).
       <a href="https://github.com/higagan/glm-studio" target="_blank" rel="noopener">View the repo →</a>
+    </div>
+
+    <!-- Connect-your-Ollama card: shown when nothing is reachable and no URL is set. -->
+    <div id="connectBackdrop">
+      <div id="connectCard">
+        <h2>Connect your Ollama to start chatting</h2>
+        <p id="connectLead">No Ollama backend is reachable from this page yet. Point it at your own Ollama in two steps.</p>
+        <div class="step">
+          <b>1. Run Ollama with browser access on</b>
+          <div class="code"><code>OLLAMA_ORIGINS=* ollama serve</code><button class="ghost" onclick="copyText('OLLAMA_ORIGINS=* ollama serve')">copy</button></div>
+          <div class="small">This lets a web page call Ollama directly. Without it the browser blocks the request.</div>
+        </div>
+        <div class="step">
+          <b>2. Enter your Ollama URL</b>
+          <div class="row">
+            <input type="text" id="connectUrl" placeholder="http://localhost:11434">
+            <button class="primary" onclick="connectOllama()">Connect</button>
+          </div>
+          <div id="connMsg"></div>
+          <div class="small">On your own machine it's usually <code>http://localhost:11434</code>. On another device on your network, use that machine's IP.</div>
+        </div>
+        <button class="ghost" onclick="dismissConnect()">Skip — I'll set it up later (Settings → Connection)</button>
+      </div>
     </div>
 
     <script>
         const OLLAMA_HOST = '';
+        // If the user enters their own Ollama URL (e.g. on the hosted demo, where
+        // there's no Python proxy), the browser calls Ollama directly. Blank means
+        // "use the bundled proxy" (relative /api), which is the default when running
+        // server.py locally.
+        let ollamaUrl = '';
+        function apiBase() { return (ollamaUrl || '').replace(/\/+$/, ''); }
         let currentChat = [];
         let isStreaming = false;
         let activeConvId = null;
@@ -1197,6 +1266,7 @@ Notes: Linger on this one — the 9 PM soap was the social glue of the household
                 customSystemPrompt = s.systemPrompt || '';
                 autoOpenPanel = s.autoOpenPanel !== false;
                 sendOnEnter = s.sendOnEnter !== false;
+                ollamaUrl = s.ollamaUrl || '';
             } catch (e) { /* ignore corrupt settings */ }
         }
         function saveSettings() {
@@ -1204,29 +1274,64 @@ Notes: Linger on this one — the 9 PM soap was the social glue of the household
             const promptEl = document.getElementById('settingsSystemPrompt');
             const autoEl = document.getElementById('settingsAutoOpen');
             const enterEl = document.getElementById('settingsSendEnter');
+            const urlEl = document.getElementById('settingsOllamaUrl');
             selectedModel = modelEl?.value || selectedModel;
             customSystemPrompt = (promptEl?.value || '').trim();
             autoOpenPanel = !!autoEl?.checked;
             sendOnEnter = !!enterEl?.checked;
+            const prevUrl = ollamaUrl;
+            ollamaUrl = (urlEl?.value || '').trim().replace(/\/+$/, '');
             localStorage.setItem(SETTINGS_KEY, JSON.stringify({
                 model: selectedModel,
                 systemPrompt: customSystemPrompt,
                 autoOpenPanel,
-                sendOnEnter
+                sendOnEnter,
+                ollamaUrl
             }));
             closeSettings();
             showToast('Settings saved');
+            // If the endpoint changed, re-check connectivity right away so the
+            // status dot + connect card reflect the new target.
+            if (prevUrl !== ollamaUrl) checkOllama();
         }
         function openSettings() {
             const modelEl = document.getElementById('settingsModel');
             const promptEl = document.getElementById('settingsSystemPrompt');
             const autoEl = document.getElementById('settingsAutoOpen');
             const enterEl = document.getElementById('settingsSendEnter');
+            const urlEl = document.getElementById('settingsOllamaUrl');
             if (modelEl) modelEl.value = selectedModel;
             if (promptEl) promptEl.value = customSystemPrompt;
             if (autoEl) autoEl.checked = autoOpenPanel;
             if (enterEl) enterEl.checked = sendOnEnter;
+            if (urlEl) urlEl.value = ollamaUrl;
+            const res = document.getElementById('connResult'); if (res) res.textContent = '';
             document.getElementById('settingsOverlay').classList.add('show');
+        }
+        // Probe the currently-configured endpoint (proxy if no URL set, else the
+        // direct URL) and report the result in the Settings panel. Lets a visitor
+        // on the hosted demo confirm their Ollama URL + CORS are correct before
+        // chatting.
+        async function testConnection() {
+            const res = document.getElementById('connResult');
+            const urlEl = document.getElementById('settingsOllamaUrl');
+            if (urlEl) { ollamaUrl = (urlEl.value || '').trim().replace(/\/+$/, ''); }
+            if (res) { res.style.color = 'var(--text-tertiary)'; res.textContent = 'Testing…'; }
+            try {
+                const r = await fetch(`${apiBase()}/api/tags`);
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                const data = await r.json();
+                const n = data.models?.length || 0;
+                if (res) { res.style.color = 'var(--success)'; res.textContent = `Connected — ${n} model${n === 1 ? '' : 's'} available`; }
+                checkOllama();
+            } catch (e) {
+                if (res) {
+                    res.style.color = 'var(--accent)';
+                    res.textContent = ollamaUrl
+                        ? `Couldn't reach ${ollamaUrl}. Is Ollama running there with CORS on (OLLAMA_ORIGINS=*)?`
+                        : `Couldn't reach the proxy. Run 'python3 server.py' locally, or set an Ollama URL above.`;
+                }
+            }
         }
         function closeSettings() {
             document.getElementById('settingsOverlay').classList.remove('show');
@@ -1791,7 +1896,7 @@ Topic: ${t}`
             const text = document.getElementById('statusText');
             const overlay = document.getElementById('composerOverlay');
             try {
-                const res = await fetch(`${OLLAMA_HOST}/api/tags`);
+                const res = await fetch(`${apiBase()}/api/tags`);
                 if (res.ok) {
                     const data = await res.json();
                     const hasGLM = data.models?.some(m => m.name === 'glm-5.2:cloud');
@@ -1799,6 +1904,7 @@ Topic: ${t}`
                     dot.style.background = hasGLM ? 'var(--success)' : 'var(--warning)';
                     text.textContent = hasGLM ? 'GLM-5.2 ready' : 'Model not loaded';
                     overlay.classList.remove('show');
+                    hideConnectCard();
                     // Populate model selector from Ollama
                     const sel = document.getElementById('settingsModel');
                     if (sel && data.models?.length) {
@@ -1813,6 +1919,55 @@ Topic: ${t}`
                 dot.style.background = 'var(--accent)';
                 text.textContent = 'Ollama offline';
                 overlay.classList.add('show');
+                // Nothing reachable and no URL configured yet → offer the guided
+                // connect flow. Once the user has set a URL we leave them to the
+                // status dot + Settings rather than nagging with a modal.
+                if (!ollamaUrl && !localStorage.getItem('glm-connect-dismissed')) {
+                    showConnectCard();
+                }
+            }
+        }
+        // --- Connect-your-Ollama guided flow ---
+        let connectDismissed = false;
+        function showConnectCard() {
+            const lead = document.getElementById('connectLead');
+            if (lead) lead.textContent = isDemoMode()
+                ? "This is the hosted demo — it has no backend of its own. Point it at your own Ollama to chat right here, no install of this app needed."
+                : "No Ollama is reachable. Start Ollama locally, or point this UI at an Ollama URL below.";
+            const inp = document.getElementById('connectUrl');
+            if (inp && !inp.value) inp.value = 'http://localhost:11434';
+            document.getElementById('connectBackdrop').classList.add('show');
+        }
+        function hideConnectCard() {
+            document.getElementById('connectBackdrop').classList.remove('show');
+        }
+        function dismissConnect() {
+            localStorage.setItem('glm-connect-dismissed', '1');
+            connectDismissed = true;
+            hideConnectCard();
+        }
+        async function connectOllama() {
+            const inp = document.getElementById('connectUrl');
+            const msg = document.getElementById('connMsg');
+            const url = (inp?.value || '').trim().replace(/\/+$/, '');
+            if (!url) { if (msg) { msg.style.color = 'var(--accent)'; msg.textContent = 'Enter a URL first.'; } return; }
+            if (msg) { msg.style.color = 'var(--text-tertiary)'; msg.textContent = 'Connecting…'; }
+            ollamaUrl = url;
+            try {
+                const r = await fetch(`${apiBase()}/api/tags`);
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                const data = await r.json();
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+                    ...(JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')),
+                    ollamaUrl
+                }));
+                if (msg) { msg.style.color = 'var(--success)'; msg.textContent = `Connected — ${data.models?.length || 0} model(s). Loading…`; }
+                hideConnectCard();
+                localStorage.removeItem('glm-connect-dismissed');
+                checkOllama();
+            } catch (e) {
+                if (msg) { msg.style.color = 'var(--accent)'; msg.textContent = `Couldn't reach ${url}. Is Ollama running there with OLLAMA_ORIGINS=*?`; }
+                ollamaUrl = ''; // revert so the guided card can reappear if they retry later
             }
         }
 
@@ -2127,7 +2282,7 @@ Topic: ${t}`
                 if (payloadSize > MAX_PAYLOAD_CHARS) {
                     throw new Error(`This conversation is too large for the model (${(payloadSize/1000000).toFixed(1)}M chars). Start a new chat, or remove a large file attachment and retry.`);
                 }
-                const res = await fetch(`${OLLAMA_HOST}/api/chat`, {
+                const res = await fetch(`${apiBase()}/api/chat`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ model: selectedModel, messages, stream: true }),
                     signal: abortController.signal
