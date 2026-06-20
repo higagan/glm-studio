@@ -1087,6 +1087,71 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/contrib/auto-render.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css" id="hljsLightTheme">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css" id="hljsDarkTheme" disabled>
+
+    <!-- Static demo content (GitHub Pages showcase). Read as plain text and
+         seeded into a conversation in demo mode so visitors see real artifacts
+         rendered without a running Ollama backend. type="text/plain" keeps the
+         backticks and braces untouched. -->
+    <script type="text/plain" id="demoDeck">## Slide 1: title
+# From Doordarshan to OTT
+## The evolution of Indian television · 1959–2025
+
+## Slide 2: bullets
+## Three eras of Indian TV
+- **1959–1990s** — Doordarshan, the monopoly years
+- **1990s–2000s** — Cable & satellite, the channel explosion
+- **2010s–now** — Digital & OTT, the unbundling of TV
+- One screen, three completely different eras
+
+## Slide 3: chart
+## TV households in India (millions)
+```chart
+{
+  "chart_type": "bar",
+  "title": "Estimated TV households in India (millions)",
+  "data": { "labels": ["1980","1990","2000","2010","2020"], "datasets": [{ "label": "TV households (m)", "data": [2, 30, 90, 160, 210] }] }
+}
+```
+
+## Slide 4: split
+## Cable changed everything
+Left: **Before** — one state channel, fixed evening slots, communal viewing, myth & soap.
+Right: **After** — hundreds of private channels, 24×7 programming, fragmented audiences, reality & news.
+
+## Slide 5: quote
+> In the cable era, families planned their evenings around the 9 PM soap.
+— A defining habit of Indian primetime
+Notes: Linger on this one — the 9 PM soap was the social glue of the household.
+
+## Slide 6: bullets
+## The OTT shift
+- On-demand instead of scheduled
+- Phone, not just the living-room TV
+- Subscription + freemium, not channel bundles
+- Originals, regional, mature — creators lead, not gatekeepers</script>
+    <script type="text/plain" id="demoCards">[
+  { "front": "When did Indian television begin?", "back": "1959, with an experimental telecast from Delhi." },
+  { "front": "What sparked colour TV in India?", "back": "The 1982 Asian Games, broadcast in colour." },
+  { "front": "Name the era-defining daily soap from 2000.", "back": "Kyunki Saas Bhi Kabhi Bahu Thi." },
+  { "front": "What did OTT unbundle from linear TV?", "back": "Scheduling and the channel bundle — viewers watch on-demand, on any device." }
+]</script>
+
+    <style>
+      #demoBanner { display:none; position:fixed; top:0; left:0; right:0; z-index:9999;
+        background:var(--bg,#1f1e1d); border-bottom:1px solid var(--border,#3a3835);
+        padding:7px 14px; font:13px/1.4 system-ui,-apple-system,sans-serif; color:var(--text,#f5f3ef);
+        text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.18); }
+      #demoBanner code { background:rgba(217,119,87,.15); padding:1px 5px; border-radius:4px; color:#d97757; }
+      #demoBanner a { color:#d97757; text-decoration:none; margin-left:6px; font-weight:600; }
+      #demoBanner a:hover { text-decoration:underline; }
+      body.demo-on { padding-top:34px; }
+    </style>
+    <div id="demoBanner">
+      <strong>Static demo</strong> — this is the real UI, read-only on GitHub Pages.
+      Chat needs Ollama running locally: clone the repo and run <code>python3 server.py</code>.
+      <a href="https://github.com/higagan/glm-studio" target="_blank" rel="noopener">View the repo →</a>
+    </div>
+
     <script>
         const OLLAMA_HOST = '';
         let currentChat = [];
@@ -1363,6 +1428,48 @@ Topic: ${t}`
             hideWelcome();
             renderChat();
             renderHistory();
+        }
+        // --- Static demo (GitHub Pages showcase) ---
+        // On github.io (or ?demo anywhere), seed a sample conversation once so the
+        // artifact panel renders a real slide deck + flashcards with no backend. The
+        // flag in localStorage stops it from re-seeding and clobbering a visitor's own
+        // chats if they come back later.
+        function isDemoMode() {
+            try {
+                return location.hostname.endsWith('github.io')
+                    || new URLSearchParams(location.search).has('demo');
+            } catch (e) { return false; }
+        }
+        function seedDemo() {
+            if (!isDemoMode()) return;
+            if (localStorage.getItem('glm-demo-seeded')) return;
+            const deck = (document.getElementById('demoDeck') || {}).textContent || '';
+            const cards = (document.getElementById('demoCards') || {}).textContent || '';
+            if (!deck.trim()) return;
+            const now = Date.now();
+            const conv = {
+                id: 'conv-demo-' + now,
+                title: 'Demo · Indian TV: Doordarshan → OTT',
+                updatedAt: now,
+                messages: [
+                    { role: 'user', id: 'demo-u1', content: 'Make me a slide deck on the evolution of Indian television, from Doordarshan to OTT.' },
+                    { role: 'assistant', id: 'demo-a1', content: deck.trim() },
+                    { role: 'user', id: 'demo-u2', content: 'Now make a few flashcards from the key facts.' },
+                    { role: 'assistant', id: 'demo-a2', content: '```flashcards\n' + cards.trim() + '\n```' }
+                ]
+            };
+            const convs = getConversations();
+            if (!convs.some(c => c.id.startsWith('conv-demo-'))) {
+                saveConversations([conv, ...convs]);
+            }
+            localStorage.setItem(ACTIVE_KEY, conv.id);
+            localStorage.setItem('glm-demo-seeded', '1');
+        }
+        function showDemoBanner() {
+            if (!isDemoMode()) return;
+            document.body.classList.add('demo-on');
+            const b = document.getElementById('demoBanner');
+            if (b) b.style.display = '';
         }
         function renderHistory() {
             const el = document.getElementById('chatHistory');
@@ -3500,7 +3607,9 @@ Topic: ${t}`
         document.addEventListener('DOMContentLoaded', () => {
             checkOllama();
             loadTheme();
+            seedDemo();
             loadChat();
+            showDemoBanner();
             loadPinState();
             loadDrafts();
             loadSettings();

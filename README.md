@@ -1,6 +1,16 @@
 # GLM Studio
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-d97757?logo=github)](LICENSE)
+[![Live demo](https://img.shields.io/badge/Try%20the%20demo-glm--studio-d97757?logo=githubpages&logoColor=white)](https://higagan.github.io/glm-studio/)
+[![No build step](https://img.shields.io/badge/build-none-d97757?logo=deno&logoColor=white)](#quick-start)
+[![Runs any Ollama model](https://img.shields.io/badge/Ollama-compatible-d97757?logo=ollama&logoColor=white)](#why-this-ui)
+
 **Run GLM (and any Ollama model) locally, in a web UI that's actually nice to use.**
+
+> 🖼️ *TODO: drop a hero screenshot or short GIF here* — the app with a slide deck
+> rendered in the artifact panel and the **Export → .pptx** button visible. Capture it
+> locally (`python3 server.py`, open the sample deck), save as `docs/screenshot.png`,
+> then replace this block with `![GLM Studio](docs/screenshot.png)`.
 
 GLM Studio is a self-hosted web interface for chatting with a local GLM model through
 [Ollama](https://ollama.com) — no cloud, no API keys, no monthly bill, nothing leaving
@@ -30,6 +40,19 @@ home:
 
 Think of it as a lightweight, local-first alternative to a hosted AI writing deck — but
 it runs on your laptop, talks to your own model, and exports files you own.
+
+### How it compares
+
+- **vs the `ollama` terminal prompt** — Ollama's CLI is fine for a one-line question, but
+  the moment you ask for a deck, a chart or a report, you're staring at raw text. GLM
+  Studio renders that output (charts plot, decks paginate, flashcards flip) and exports
+  it to real files.
+- **vs Open WebUI** — Open WebUI is a full server app with a database, users and a
+  container stack. GLM Studio is one HTML file and ~140 lines of Python. No accounts, no
+  Postgres, no Docker required to try it. The trade-off: it's a single-user, single-machine
+  tool by design, not a multi-user server.
+- **vs a hosted AI deck/writing tool** — no cloud, no API key, no bill, nothing leaves
+  your machine. You also own the model and the output files.
 
 ## Quick start
 
@@ -110,6 +133,35 @@ Slide decks use a small text format (`## Slide N: <layout>` with `title`, `bulle
 line. Export to a real, editable `.pptx` with native PowerPoint charts (bars, lines, pies,
 doughnuts) via [PptxGenJS](https://github.com/gitbrent/PptxGenJS) — fully client-side, the
 deck never leaves the browser.
+
+## Examples
+
+A real prompt and what comes back — the repo ships a sample deck
+([`indian-tv-slides.md`](indian-tv-slides.md)) you can open in the app, or see rendered in
+the [live demo](https://higagan.github.io/glm-studio/).
+
+> **Prompt:** *Make me a slide deck on the evolution of Indian television, from
+> Doordarshan to OTT.*
+
+The model returns a `slide_deck` artifact the panel renders straight away — title, bullets,
+a chart slide, a split comparison, a quote with speaker notes — and the **Export → .pptx**
+button hands you a native PowerPoint file with the chart live and editable.
+
+A second prompt — *"now make flashcards from the key facts"* — returns a `flashcards`
+artifact that renders as a flippable card deck you can click through and shuffle, and
+export to `.csv` / `.json`.
+
+Other things that work well: *"compare these three phones as a table"*, *"make a study
+guide on the French Revolution"*, *"plot quarterly revenue as a bar chart"*.
+
+## Roadmap
+
+A few things worth doing next — feedback and PRs welcome:
+
+- More slide layouts (image, two-column stats, agenda with timings)
+- Markdown document export to `.docx`
+- Conversation folders / tags
+- Streaming artifact rendering (render as the model writes, not only at the end)
 
 ## Project layout
 
