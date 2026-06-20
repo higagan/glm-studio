@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hospital Profile — MediBricks Design Mockups</title>
+  <style>
+    :root {
+      --primary: #14368a;
+      --primary-light: #e8eef8;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #fff;
+      --amber: #d97706;
+      --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #eef2f7; color: var(--text); padding: 32px; }
+    h1.page-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    p.page-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; max-width: 720px; line-height: 1.5; }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 40px 0 16px; }
+    .frame-row { display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+    .frame-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .frame-label { font-size: 13px; font-weight: 600; color: var(--muted); }
+
+    .wireframe { background: #fff; border: 2px dashed #94a3b8; border-radius: 12px; padding: 16px; }
+    .wireframe.mobile { width: 390px; }
+    .wireframe.desktop { width: 1100px; }
+    .wf-block { background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 10px; font-size: 11px; color: #475569; font-weight: 600; text-align: center; }
+    .wf-block.primary { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+    .wf-block.trust { background: #ecfdf5; border-color: #6ee7b7; }
+    .wf-stack { display: flex; flex-direction: column; gap: 8px; }
+    .wf-row { display: grid; gap: 8px; }
+    .wf-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .wf-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .wf-row.cols-2 { grid-template-columns: 1fr 1fr; }
+    .wf-cover { min-height: 72px; background: #e2e8f0; border-radius: 8px; margin-bottom: 8px; }
+
+    .device { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(15,23,42,.08); }
+    .device.mobile { width: 390px; }
+    .device.desktop { width: 1100px; }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
+    .logo-mark { width: 28px; height: 28px; border-radius: 8px; background: var(--primary); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+    .btn-nav { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+
+    .cover { height: 120px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); position: relative; }
+    .cover.desktop-cover { height: 180px; }
+    .hero-body { padding: 0 20px 20px; margin-top: -28px; position: relative; }
+    .hero-row { display: flex; gap: 14px; align-items: flex-end; }
+    .logo-box { width: 64px; height: 64px; border-radius: 14px; background: #fff; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,.12); display: grid; place-items: center; font-weight: 800; color: var(--primary); font-size: 22px; flex-shrink: 0; }
+    .hero-text { flex: 1; min-width: 0; padding-top: 8px; }
+    .hero-text h1 { font-size: 20px; font-weight: 800; line-height: 1.2; }
+    .hero-meta { font-size: 12px; color: var(--muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .verified { color: var(--green); font-weight: 600; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
+    .stat { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; text-align: center; }
+    .stat .n { font-size: 18px; font-weight: 800; color: var(--primary); }
+    .stat .l { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .cta-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-primary { background: var(--primary); color: #fff; border: none; padding: 12px 16px; border-radius: 10px; font-weight: 700; font-size: 14px; flex: 1; min-width: 120px; }
+    .btn-outline { background: #fff; color: var(--primary); border: 1px solid var(--border); padding: 12px 16px; border-radius: 10px; font-weight: 600; font-size: 14px; }
+
+    .section { padding: 16px 20px; border-top: 8px solid var(--bg); }
+    .section h2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 12px; }
+    .trust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .trust-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-size: 12px; }
+    .trust-card strong { display: block; font-size: 13px; margin-bottom: 2px; }
+    .trust-card span { color: var(--muted); font-size: 11px; }
+    .trust-card.ok { border-color: #a7f3d0; background: #ecfdf5; }
+
+    .review { border-left: 3px solid var(--primary-light); padding-left: 12px; margin-bottom: 14px; }
+    .stars { color: var(--amber); font-size: 12px; letter-spacing: 1px; }
+    .review p { font-size: 13px; margin: 6px 0; line-height: 1.45; }
+    .review footer { font-size: 11px; color: var(--muted); }
+    .dim-bars { display: grid; gap: 6px; margin-bottom: 14px; }
+    .dim { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+    .dim .bar { flex: 1; height: 6px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
+    .dim .fill { height: 100%; background: var(--primary); border-radius: 99px; }
+
+    .job-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .job-row:last-child { border-bottom: none; }
+    .job-row .t { font-weight: 700; font-size: 14px; }
+    .job-row .m { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .pill { background: var(--primary-light); color: var(--primary); font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 99px; }
+
+    .desktop-layout { display: grid; grid-template-columns: 1fr 340px; gap: 0; }
+    .desktop-main { border-right: 1px solid var(--border); }
+    .sidebar { padding: 20px; background: var(--bg); }
+    .sidebar .sticky { position: sticky; top: 0; }
+    .search { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">Public Hospital Profile — Wireframes & Mockups</h1>
+  <p class="page-sub">Upgrade plan for /hospitals/:slug. Builds on existing HospitalProfile.tsx (~700 LOC), render-hospital SSR, and hospital-seo.ts. Goal: trust-first employer page for professionals, hospitals, and Google.</p>
+
+  <div class="section-label">1 — Information architecture (mobile scroll order)</div>
+  <div class="frame-row">
+    <div class="frame-wrap" id="wireframe-mobile">
+      <span class="frame-label">Mobile wireframe</span>
+      <div class="wireframe mobile">
+        <div class="wf-cover wf-block">Cover image</div>
+        <div class="wf-block">Hero: logo + name + verified + meta</div>
+        <div class="wf-row cols-3"><div class="wf-block">Rating</div><div class="wf-block">Reviews</div><div class="wf-block">Worked</div></div>
+        <div class="wf-row cols-3"><div class="wf-block">Shifts done</div><div class="wf-block">Repeat %</div><div class="wf-block">Open jobs</div></div>
+        <div class="wf-block primary">CTAs: View shifts · Follow · Share</div>
+        <div class="wf-block trust">Trust cards (license, GST, address…)</div>
+        <div class="wf-block">About hospital</div>
+        <div class="wf-block">Review summary + reviews</div>
+        <div class="wf-block">Working experience metrics</div>
+        <div class="wf-block">Open shifts (search + job cards)</div>
+        <div class="wf-block">Hiring activity</div>
+        <div class="wf-block">Map + directions</div>
+        <div class="wf-block">FAQ</div>
+        <div class="wf-block primary">Sticky: View open shifts</div>
+      </div>
+    </div>
+    <div class="frame-wrap" id="wireframe-desktop">
+      <span class="frame-label">Desktop wireframe</span>
+      <div class="wireframe desktop">
+        <div class="wf-cover wf-block" style="min-height:100px">Wide cover + hero overlay</div>
+        <div class="wf-row cols-2" style="margin-top:12px">
+          <div class="wf-stack">
+            <div class="wf-block trust">Trust section (2x2 cards)</div>
+            <div class="wf-block">About</div>
+            <div class="wf-block">Reviews + dimension bars</div>
+            <div class="wf-block">Working experience</div>
+            <div class="wf-block">Open shifts grid + filters</div>
+            <div class="wf-row cols-2"><div class="wf-block">Hiring activity</div><div class="wf-block">Map</div></div>
+            <div class="wf-block">FAQ</div>
+          </div>
+          <div class="wf-block primary" style="min-height:220px">Sticky sidebar: CTAs + key stats + follow</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">2 — Mobile mockup (Manipal Hospital Bangalore)</div>
+  <div class="frame-wrap" id="mockup-mobile">
+    <span class="frame-label">390px — trust-first profile</span>
+    <div class="device mobile">
+      <div class="nav"><div class="logo"><div class="logo-mark">M</div>MediBricks</div><button class="btn-nav">Get Started</button></div>
+      <div class="cover"></div>
+      <div class="hero-body">
+        <div class="hero-row">
+          <div class="logo-box">MH</div>
+          <div class="hero-text">
+            <h1>Manipal Hospital Bangalore</h1>
+            <div class="hero-meta">
+              <span class="verified">✓ Verified</span>
+              <span>·</span><span>Multi-speciality Hospital</span>
+              <span>·</span><span>Bengaluru</span>
+              <span>·</span><span>Est. 1991</span>
+              <span>·</span><span>600 beds</span>
+              <span>·</span><span>24×7 Emergency</span>
+            </div>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat"><div class="n">4.6</div><div class="l">Rating</div></div>
+          <div class="stat"><div class="n">28</div><div class="l">Reviews</div></div>
+          <div class="stat"><div class="n">42</div><div class="l">Worked here</div></div>
+          <div class="stat"><div class="n">86</div><div class="l">Shifts done</div></div>
+          <div class="stat"><div class="n">68%</div><div class="l">Repeat rate</div></div>
+          <div class="stat"><div class="n">1</div><div class="l">Open shift</div></div>
+        </div>
+        <div class="cta-row">
+          <button class="btn-primary">View open shifts</button>
+          <button class="btn-outline">Follow</button>
+          <button class="btn-outline">Share</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Trust & verification</h2>
+        <div class="trust-grid">
+          <div class="trust-card ok"><strong>MediBricks verified</strong><span>Identity & facility checks</span></div>
+          <div class="trust-card ok"><strong>License verified</strong><span>Clinical establishment</span></div>
+          <div class="trust-card ok"><strong>NABH accredited</strong><span>Quality standards</span></div>
+          <div class="trust-card ok"><strong>Address verified</strong><span>GPS + documentation</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Professional reviews</h2>
+        <div class="dim-bars">
+          <div class="dim"><span>Payment</span><div class="bar"><div class="fill" style="width:88%"></div></div><span>4.4</span></div>
+          <div class="dim"><span>Management</span><div class="bar"><div class="fill" style="width:82%"></div></div><span>4.1</span></div>
+          <div class="dim"><span>Environment</span><div class="bar"><div class="fill" style="width:90%"></div></div><span>4.5</span></div>
+          <div class="dim"><span>Shift org</span><div class="bar"><div class="fill" style="width:86%"></div></div><span>4.3</span></div>
+        </div>
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>Clear handover, payment on time. ICU team was supportive throughout the night shift.</p>
+          <footer>ICU Nurse · Would work again: Yes · Mar 2026</footer>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Open shifts</h2>
+        <input class="search" placeholder="Search shifts…" />
+        <div class="job-row"><div><div class="t">Emergency Night Physician</div><div class="m">Jul 15 · ₹3,800/hr · Emergency</div></div><span class="pill">Apply</span></div>
+      </div>
+
+      <div class="section">
+        <h2>Hiring activity</h2>
+        <p style="font-size:13px;color:var(--muted)">3 jobs posted (30d) · 2 professionals hired · Top: Emergency Medicine, ICU Nursing</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">3 — Desktop mockup</div>
+  <div class="frame-wrap" id="mockup-desktop">
+    <span class="frame-label">1100px — two-column with sticky trust sidebar</span>
+    <div class="device desktop">
+      <div class="nav"><div class="logo"><div class="logo-mark">M</div>MediBricks</div><button class="btn-nav">Get Started</button></div>
+      <div class="cover desktop-cover"></div>
+      <div class="hero-body" style="padding-bottom:24px">
+        <div class="hero-row">
+          <div class="logo-box" style="width:80px;height:80px;font-size:28px">MH</div>
+          <div class="hero-text" style="padding-top:16px">
+            <h1 style="font-size:28px">Manipal Hospital Bangalore</h1>
+            <div class="hero-meta" style="font-size:14px;margin-top:8px">
+              <span class="verified">✓ MediBricks Verified</span>
+              <span>Multi-speciality Hospital · Bengaluru · Est. 1991 · 600 beds · 24×7 Emergency</span>
+            </div>
+            <div class="stats-grid" style="grid-template-columns:repeat(6,1fr);margin-top:16px">
+              <div class="stat"><div class="n">4.6</div><div class="l">Rating</div></div>
+              <div class="stat"><div class="n">28</div><div class="l">Reviews</div></div>
+              <div class="stat"><div class="n">42</div><div class="l">Worked</div></div>
+              <div class="stat"><div class="n">86</div><div class="l">Shifts</div></div>
+              <div class="stat"><div class="n">68%</div><div class="l">Repeat</div></div>
+              <div class="stat"><div class="n">1</div><div class="l">Open</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="desktop-layout">
+        <div class="desktop-main">
+          <div class="section"><h2>Trust & verification</h2><div class="trust-grid" style="grid-template-columns:repeat(4,1fr)"><div class="trust-card ok"><strong>Verified</strong><span>MediBricks</span></div><div class="trust-card ok"><strong>License</strong><span>Verified</span></div><div class="trust-card ok"><strong>NABH</strong><span>Accredited</span></div><div class="trust-card ok"><strong>Address</strong><span>Verified</span></div></div></div>
+          <div class="section"><h2>About</h2><p style="font-size:14px;color:var(--muted);line-height:1.6">Leading multi-speciality hospital in Old Airport Road, Bengaluru. Known for emergency care, cardiac sciences, and oncology.</p></div>
+          <div class="section"><h2>Open shifts</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="job-row" style="border:1px solid var(--border);border-radius:12px;padding:14px"><div><div class="t">Emergency Night Physician</div><div class="m">₹3,800/hr · Jul 15</div></div></div><div class="job-row" style="border:1px solid var(--border);border-radius:12px;padding:14px;opacity:.5"><div><div class="t">More shifts coming</div><div class="m">Follow for alerts</div></div></div></div></div>
+        </div>
+        <div class="sidebar"><div class="sticky"><button class="btn-primary" style="width:100%;margin-bottom:8px">View 1 open shift</button><button class="btn-outline" style="width:100%;margin-bottom:8px">Follow hospital</button><button class="btn-outline" style="width:100%">Share profile</button><p style="font-size:12px;color:var(--muted);margin-top:16px;text-align:center">Avg payment: 3.2 days · Response: 18h</p></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

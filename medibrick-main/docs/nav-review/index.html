@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MediBrick — Navigation Review</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 2rem;
+        background: #f8fafc;
+        color: #0f172a;
+      }
+      h1 { margin: 0 0 0.25rem; font-size: 1.5rem; }
+      p { color: #64748b; margin: 0 0 2rem; }
+      section { margin-bottom: 2.5rem; }
+      h2 { font-size: 1.1rem; margin: 0 0 1rem; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+      figure {
+        margin: 0;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
+      }
+      figcaption {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-top: 1px solid #f1f5f9;
+      }
+      img { width: 100%; display: block; }
+    </style>
+  </head>
+  <body>
+    <h1>Navigation review</h1>
+    <p>Captured locally — professional &amp; hospital use <code>/dev/navigation-review</code> preview chrome.</p>
+
+    <section>
+      <h2>Desktop</h2>
+      <div class="grid">
+        <figure>
+          <img src="screenshots/desktop/01-logged-out.png" alt="Logged out desktop" />
+          <figcaption>Logged out</figcaption>
+        </figure>
+        <figure>
+          <img src="screenshots/desktop/02-professional.png" alt="Professional desktop" />
+          <figcaption>Professional</figcaption>
+        </figure>
+        <figure>
+          <img src="screenshots/desktop/03-hospital.png" alt="Hospital desktop" />
+          <figcaption>Hospital</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>Mobile</h2>
+      <div class="grid">
+        <figure>
+          <img src="screenshots/mobile/01-logged-out.png" alt="Logged out mobile" />
+          <figcaption>Logged out (drawer open)</figcaption>
+        </figure>
+        <figure>
+          <img src="screenshots/mobile/02-professional.png" alt="Professional mobile" />
+          <figcaption>Professional (drawer open)</figcaption>
+        </figure>
+        <figure>
+          <img src="screenshots/mobile/03-hospital.png" alt="Hospital mobile" />
+          <figcaption>Hospital (drawer open)</figcaption>
+        </figure>
+      </div>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-06-13T18:44:15.859856",
+  "naukri": {
+    "applied": 0,
+    "skipped": 0
+  },
+  "cutshort": {
+    "applied": 0,
+    "skipped": 0
+  },
+  "instahyre": {
+    "applied": 0,
+    "skipped": 1
+  },
+  "total_applied": 0,
+  "total_skipped": 1,
+  "log": [
+    "[18:43:14] ============================================================",
+    "[18:43:14] ALTERNATIVE PLATFORM APPLICATIONS",
+    "[18:43:14] ============================================================",
+    "[18:43:14] === NAUKRI APPLICATIONS ===",
+    "[18:43:24] Loaded Naukri recommended jobs",
+    "[18:43:29] === CUTSHORT APPLICATIONS ===",
+    "[18:43:34] Loaded Cutshort job search",
+    "[18:43:39] === INSTAHYRE APPLICATIONS ===",
+    "[18:43:45] Loaded Instahyre matching opportunities",
+    "[18:44:15] Error on Instahyre job 1: ElementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 \u00d7 waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 \u00d7 waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 \u00d7 waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+    "[18:44:15] \n============================================================",
+    "[18:44:15] SUMMARY",
+    "[18:44:15] ============================================================",
+    "[18:44:15] Naukri: 0 applied, 0 skipped",
+    "[18:44:15] Cutshort: 0 applied, 0 skipped",
+    "[18:44:15] Instahyre: 0 applied, 1 skipped",
+    "[18:44:15] TOTAL: 0 applied, 1 skipped"
+  ]
+}

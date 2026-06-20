@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizCult Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f9fafb; }
+    .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+    .header { display: flex; align-items: center; gap: 8px; padding: 12px 0; }
+    .logo { width: 32px; height: 32px; background: #0ea5e9; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid #f3f4f6; }
+    .btn { background: #0ea5e9; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; }
+    .btn:hover { background: #0284c7; }
+    .option { background: white; border: 2px solid #e5e7eb; padding: 14px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+    .option:hover { border-color: #0ea5e9; }
+    .option.correct { border-color: #10b981; background: #ecfdf5; }
+    .option.wrong { border-color: #ef4444; background: #fef2f2; }
+    .hidden { display: none; }
+    .score { font-size: 48px; font-weight: 800; color: #0ea5e9; }
+    .rank { background: #eff6ff; color: #0369a1; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600; }
+    .share-btn { background: #10b981; }
+    .share-btn:hover { background: #059669; }
+    #loading { text-align: center; padding: 40px; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #0ea5e9; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HOME -->
+    <div id="home">
+      <div class="header">
+        <div class="logo">⚡</div>
+        <h1>QuizCult</h1>
+      </div>
+      <div id="loading">
+        <div class="spinner"></div>
+        <p>Loading challenges...</p>
+      </div>
+      <div id="challenges-list" class="hidden"></div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz" class="hidden">
+      <div class="header">
+        <button onclick="showHome()">← Back</button>
+        <span id="progress">1/5</span>
+      </div>
+      <div class="card">
+        <h3 id="question-text">Question</h3>
+      </div>
+      <div id="options"></div>
+      <div id="explanation" class="hidden" style="padding: 12px; color: #6b7280; font-style: italic;"></div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="result" class="hidden">
+      <div class="card" style="text-align: center;">
+        <p style="color: #6b7280;">Your Score</p>
+        <div class="score" id="score-display">0/0</div>
+        <div class="rank" id="rank-display">Rank #1</div>
+        <p id="ai-summary" style="color: #6b7280; margin-top: 12px; font-style: italic;"></p>
+      </div>
+      <button class="btn share-btn" onclick="challengeFriend()">📤 Challenge a Friend</button>
+      <br><br>
+      <button class="btn" onclick="showHome()">🔄 Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api';
+    let challenges = [];
+    let currentQuiz = null;
+    let currentQuestion = 0;
+    let answers = [];
+    let playId = null;
+
+    async function loadChallenges() {
+      try {
+        const res = await fetch(`${API}/challenges/evergreen`);
+        challenges = await res.json();
+        renderChallenges();
+      } catch (e) {
+        document.querySelector('#loading p').textContent = 'Error loading. Click to retry.';
+        document.querySelector('#loading').onclick = loadChallenges;
+      }
+    }
+
+    function renderChallenges() {
+      document.getElementById('loading').classList.add('hidden');
+      const list = document.getElementById('challenges-list');
+      list.classList.remove('hidden');
+      list.innerHTML = challenges.map((c, i) => `
+        <div class="card" style="cursor: pointer;" onclick="startQuiz('${c.id}')">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <span style="font-size: 12px; background: ${getDifficultyColor(c.difficulty)}; padding: 2px 8px; border-radius: 10px;">${c.difficulty}</span>
+              <h3 style="margin-top: 8px;">${c.title}</h3>
+            </div>
+          </div>
+          <p style="color: #9ca3af; font-size: 14px; margin-top: 8px;">${c.play_count} plays • ${c.question_count} questions</p>
+          <button class="btn" style="margin-top: 12px;">Play Now →</button>
+        </div>
+      `).join('');
+    }
+
+    function getDifficultyColor(d) {
+      return d === 'easy' ? '#d1fae5' : d === 'hard' ? '#fee2e2' : '#fef3c7';
+    }
+
+    async function startQuiz(challengeId) {
+      document.getElementById('home').classList.add('hidden');
+      document.getElementById('quiz').classList.remove('hidden');
+      document.getElementById('result').classList.add('hidden');
+      
+      currentQuestion = 0;
+      answers = [];
+      
+      const res = await fetch(`${API}/gameplay/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challenge_id: challengeId })
+      });
+      currentQuiz = await res.json();
+      playId = currentQuiz.play_id;
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = currentQuiz.questions[currentQuestion];
+      document.getElementById('progress').textContent = `${currentQuestion + 1}/${currentQuiz.total_questions}`;
+      document.getElementById('question-text').textContent = q.question_text;
+      document.getElementById('explanation').classList.add('hidden');
+      
+      const opts = document.getElementById('options');
+      opts.innerHTML = q.options.map((opt, i) => `
+        <div class="option" id="opt-${i}" onclick="selectAnswer(${i})">
+          <strong>${String.fromCharCode(65 + i)}.</strong> ${opt}
+        </div>
+      `).join('');
+    }
+
+    function selectAnswer(idx) {
+      const q = currentQuiz.questions[currentQuestion];
+      const correct = q.correct_answer;
+      
+      // Show feedback
+      document.getElementById(`opt-${correct}`).classList.add('correct');
+      if (idx !== correct) {
+        document.getElementById(`opt-${idx}`).classList.add('wrong');
+      }
+      
+      if (q.explanation) {
+        document.getElementById('explanation').textContent = q.explanation;
+        document.getElementById('explanation').classList.remove('hidden');
+      }
+      
+      answers.push({
+        question_id: q.id,
+        selected_answer: idx,
+        time_taken_seconds: 3,
+        confidence: idx === correct ? 'confident' : 'guess'
+      });
+      
+      // Disable all options
+      document.querySelectorAll('.option').forEach(el => el.style.pointerEvents = 'none');
+      
+      setTimeout(() => {
+        if (currentQuestion < currentQuiz.questions.length - 1) {
+          currentQuestion++;
+          renderQuestion();
+        } else {
+          submitQuiz();
+        }
+      }, 1500);
+    }
+
+    async function submitQuiz() {
+      const res = await fetch(`${API}/gameplay/${playId}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers)
+      });
+      const result = await res.json();
+      showResult(result);
+    }
+
+    function showResult(result) {
+      document.getElementById('quiz').classList.add('hidden');
+      document.getElementById('result').classList.remove('hidden');
+      
+      document.getElementById('score-display').textContent = `${result.score}/${result.total_questions}`;
+      document.getElementById('rank-display').textContent = `Rank #${result.rank_today} • Top ${result.percentile.toFixed(0)}%`;
+      document.getElementById('ai-summary').textContent = `"${result.ai_summary}"`;
+      
+      // Store for sharing
+      window.shareToken = result.share_token;
+      window.shareUrl = `${window.location.origin}/challenge/${result.share_token}`;
+    }
+
+    function challengeFriend() {
+      const text = `I scored on QuizCult! Can you beat me? ${window.shareUrl}`;
+      if (navigator.share) {
+        navigator.share({ title: 'QuizCult', text, url: window.shareUrl });
+      } else {
+        const wa = encodeURIComponent(text);
+        window.open(`https://wa.me/?text=${wa}`, '_blank');
+      }
+    }
+
+    function showHome() {
+      document.getElementById('home').classList.remove('hidden');
+      document.getElementById('quiz').classList.add('hidden');
+      document.getElementById('result').classList.add('hidden');
+      loadChallenges();
+    }
+
+    // Start
+    loadChallenges();
+  </script>
+</body>
+</html>

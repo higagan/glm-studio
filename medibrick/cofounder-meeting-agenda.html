@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Medibrick Cofounder Meeting - Gagan & Arpana</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 1000px; margin: 0 auto; padding: 30px; color: #333; font-size: 16px; }
+h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 15px; margin-top: 40px; page-break-before: always; }
+h1:first-of-type { page-break-before: auto; }
+h2 { color: #34495e; border-bottom: 2px solid #bdc3c7; padding-bottom: 10px; margin-top: 35px; }
+h3 { color: #7f8c8d; margin-top: 25px; }
+table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 14px; }
+th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+th { background-color: #3498db; color: white; font-weight: 600; }
+tr:nth-child(even) { background-color: #f8f9fa; }
+blockquote { border-left: 4px solid #3498db; margin: 20px 0; padding: 15px 20px; background: #f8f9fa; font-style: italic; }
+code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 14px; }
+pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+ul, ol { margin: 10px 0; padding-left: 25px; }
+li { margin: 8px 0; }
+hr { border: none; border-top: 2px solid #ecf0f1; margin: 30px 0; }
+p { margin: 12px 0; }
+strong { color: #2c3e50; }
+@media print {
+  body { padding: 20px; }
+  h1 { page-break-before: always; }
+  h1:first-of-type { page-break-before: auto; }
+}
+</style>
+</head>
+<body>
+<h1>Medibrick Cofounder Meeting Agenda</h1>
+
+<p><strong>Date:</strong> 2026-06-01<br />
+<strong>Attendees:</strong> Gagan (Tech/Founder) + Arpana (Medical/Healthcare)<br />
+<strong>Objective:</strong> Align on current state, priorities, and next steps</p>
+
+<hr />
+
+<h2>Slide 1: Meeting Opening (2 min)</h2>
+
+<p><strong>Welcome + Context</strong><br />
+- Where we are today vs where we need to be<br />
+- What's working, what's blocked<br />
+- What we need to decide today</p>
+
+<p><strong>Today's Goal:</strong> Leave with clear action items for next 2 weeks</p>
+
+<hr />
+
+<h2>Slide 2: Platform Status Overview (5 min)</h2>
+
+<h3>What We've Built</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Component</th>
+  <th>Status</th>
+  <th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Landing page</td>
+  <td>✅ Live</td>
+  <td>medibrick.com</td>
+</tr>
+<tr>
+  <td>Database (Supabase)</td>
+  <td>✅ Set up</td>
+  <td>Needs RLS verification</td>
+</tr>
+<tr>
+  <td>Basic auth</td>
+  <td>🟡 Partial</td>
+  <td>Needs completion</td>
+</tr>
+<tr>
+  <td>Shift posting</td>
+  <td>🔴 Not started</td>
+  <td>Core MVP feature</td>
+</tr>
+<tr>
+  <td>Application flow</td>
+  <td>🔴 Not started</td>
+  <td>Hospital selects professional</td>
+</tr>
+<tr>
+  <td>Payment escrow</td>
+  <td>🔴 Not started</td>
+  <td>Critical differentiator</td>
+</tr>
+<tr>
+  <td>Review system</td>
+  <td>🔴 Not started</td>
+  <td>Post-shift bilateral</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Key Decision Needed:</h3>
+
+<p><strong>Q:</strong> What's the minimum viable product for first hospital pilot?<br />
+<strong>Options:</strong><br />
+- A) Full platform with all features (4-6 weeks)<br />
+- B) Basic shift posting + application via WhatsApp (1-2 weeks)<br />
+- C) Landing page + manual matching via phone (this week)</p>
+
+<p><strong>Cofounder Input Needed:</strong> What's the fastest way to validate with 1 hospital?</p>
+
+<hr />
+
+<h2>Slide 3: The Two Core Pain Points (10 min)</h2>
+
+<h3>Pain Point #1: "Yes but No-Show"</h3>
+
+<p><strong>The Problem:</strong><br />
+- Hospital confirms nurse for tomorrow's shift<br />
+- Nurse says "Yes, I'll be there"<br />
+- Morning comes: Nurse doesn't show, doesn't pick up<br />
+- Hospital short-staffed with 40 patients, zero backup</p>
+
+<p><strong>Why It Happens:</strong><br />
+- Better offer elsewhere (another hospital pays more last minute)<br />
+- Multiple bookings (booked 2-3 places, picked best)<br />
+- Zero penalty for not showing<br />
+- No verification (anyone can say yes)<br />
+- Poor communication (no real-time tracking)</p>
+
+<p><strong>Current Workarounds (Broken):</strong><br />
+- Hospital calls 10 people, hopes 1 shows<br />
+- Relies on "known" agencies (expensive, limited pool)<br />
+- Keeps internal float staff (costly idle time)<br />
+- Manager works double shift (burnout)</p>
+
+<p><strong>Medibrick Solution:</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Problem</th>
+  <th>Our Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>No-shows</td>
+  <td>Verified profiles + deposit system (₹500-2000)</td>
+</tr>
+<tr>
+  <td>Last-minute drops</td>
+  <td>Instant backup matching — auto-promote #2 applicant</td>
+</tr>
+<tr>
+  <td>Multiple bookings</td>
+  <td>Calendar lock — once confirmed, blocked elsewhere</td>
+</tr>
+<tr>
+  <td>No penalty</td>
+  <td>No-show penalty — strike system + deposit forfeiture</td>
+</tr>
+<tr>
+  <td>No trust</td>
+  <td>Bilateral reviews + rating history visible</td>
+</tr>
+<tr>
+  <td>No visibility</td>
+  <td>Real-time status: "Confirmed → En route → Arrived"</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Target Metric:</strong> 95% show rate (industry average: ~70%)</p>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- Is ₹500-2000 deposit reasonable for nurses/technicians?<br />
+- Should we have tiered deposits (₹500 for nurses, ₹2000 for doctors)?<br />
+- What's the right strike threshold (3 no-shows = suspend)?</p>
+
+<hr />
+
+<h3>Pain Point #2: Delayed/Uncertain Payments</h3>
+
+<p><strong>The Problem:</strong><br />
+- Professional completes 12-hour shift<br />
+- Week 1: "Payment is processing"<br />
+- Week 2: "Finance team is reviewing"<br />
+- Week 3: "Will be cleared next week"<br />
+- Week 4: Still no money. Professional chasing admin.<br />
+- <strong>Result:</strong> Professional stops using platform, goes back to word-of-mouth</p>
+
+<p><strong>Why It Happens:</strong><br />
+- Hospital pays platform late<br />
+- Platform holds money as working capital<br />
+- Manual invoicing (paper bills, slow approvals)<br />
+- No transparency into payment status</p>
+
+<p><strong>Current "Solutions" (Broken):</strong><br />
+- Professional calls hospital admin daily (annoying)<br />
+- Threatens to not return (burns bridge)<br />
+- Accepts partial payment (loses money)<br />
+- Switches to cash-only word-of-mouth (limits opportunities)</p>
+
+<p><strong>Medibrick Solution:</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Feature</th>
+  <th>How It Works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Escrow system</td>
+  <td>Hospital deposits shift payment upfront</td>
+</tr>
+<tr>
+  <td>Instant release</td>
+  <td>Professional gets paid within 24h of shift completion</td>
+</tr>
+<tr>
+  <td>No hospital delay</td>
+  <td>Platform holds money, not hospital</td>
+</tr>
+<tr>
+  <td>Dispute window</td>
+  <td>48h for hospital to raise issues, else auto-release</td>
+</tr>
+<tr>
+  <td>Payment tracking</td>
+  <td>Professional sees: "Pending → Processing → Paid"</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Competitive Advantage:</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Platform</th>
+  <th>Payment Speed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Jobizo</td>
+  <td>2-4 weeks (reportedly)</td>
+</tr>
+<tr>
+  <td>Agencies</td>
+  <td>30-60 days</td>
+</tr>
+<tr>
+  <td><strong>Medibrick</strong></td>
+  <td><strong>24 hours</strong></td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- Should hospital pay full shift amount upfront or just platform fee?<br />
+- Who handles payment processing — us or third-party (Razorpay)?<br />
+- What if hospital disputes after 48h window?</p>
+
+<hr />
+
+<h2>Slide 4: Competitive Landscape (10 min)</h2>
+
+<h3>Primary Competitor: Jobizo.com</h3>
+
+<p><strong>Jobizo Stats:</strong><br />
+- 10M+ shifts fulfilled<br />
+- 150+ hospitals, 60K+ professionals<br />
+- Mobile app for professionals<br />
+- AI matching, transparent pay</p>
+
+<p><strong>Jobizo's Weaknesses (Our Opportunities):</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th>Gap</th>
+  <th>Medibrick Advantage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Job-seeker focused</strong></td>
+  <td>Institution-first — hospital posts, pros apply</td>
+</tr>
+<tr>
+  <td><strong>Allopathic doctors only</strong></td>
+  <td>Allopathic + AYUSH + nurses + technicians</td>
+</tr>
+<tr>
+  <td><strong>No Ayurvedic coverage</strong></td>
+  <td>700K+ Ayurvedic practitioners — NO platform serves them</td>
+</tr>
+<tr>
+  <td><strong>Hospitals only</strong></td>
+  <td>Clinics, diagnostic centers, wellness centers, nursing homes</td>
+</tr>
+<tr>
+  <td><strong>No no-show protection</strong></td>
+  <td>Verified + deposit + backup matching = 95% show rate</td>
+</tr>
+<tr>
+  <td><strong>Payment: 2-4 weeks</strong></td>
+  <td>24h payment after shift completion</td>
+</tr>
+<tr>
+  <td><strong>No bilateral reviews</strong></td>
+  <td>Both parties review each other — trust building</td>
+</tr>
+</tbody>
+</table>
+
+<h3>The Medibrick Flywheel</h3>
+
+<ol>
+<li>Hospital posts shift + deposits payment in escrow</li>
+<li>Professional applies + pays small deposit</li>
+<li>Both have skin in the game = Commitment secured</li>
+<li>Professional shows up (95% rate)</li>
+<li>Completes shift</li>
+<li>Payment released within 24h</li>
+<li>Both review each other = Trust built</li>
+<li>Repeat</li>
+</ol>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- Which hospital type should we target first? (Big hospital vs small clinic)<br />
+- Should we include Ayurvedic from Day 1 or add later?<br />
+- What's Jobizo's actual payment speed? (Need verification)</p>
+
+<hr />
+
+<h2>Slide 5: Target Market &amp; Positioning (5 min)</h2>
+
+<h3>Phase 1 Cities (Next 6 Months)</h3>
+
+<ol>
+<li><strong>Bengaluru</strong> (HQ) — Start here</li>
+<li>Hyderabad</li>
+<li>Chennai</li>
+<li>Mumbai</li>
+<li>Delhi</li>
+<li>Pune</li>
+</ol>
+
+<h3>Target Segments (vs Jobizo)</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Segment</th>
+  <th>Jobizo</th>
+  <th>Medibrick</th>
+  <th>Market Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Hospitals</td>
+  <td>✅ Yes</td>
+  <td>✅ Yes</td>
+  <td>Large</td>
+</tr>
+<tr>
+  <td>Clinics</td>
+  <td>❌ No</td>
+  <td>✅ Yes</td>
+  <td>Very Large</td>
+</tr>
+<tr>
+  <td>Diagnostic Centers</td>
+  <td>❌ No</td>
+  <td>✅ Yes</td>
+  <td>Large</td>
+</tr>
+<tr>
+  <td>Wellness Centers</td>
+  <td>❌ No</td>
+  <td>✅ Yes</td>
+  <td>Growing</td>
+</tr>
+<tr>
+  <td>Ayurvedic Centers</td>
+  <td>❌ No</td>
+  <td>✅ Yes</td>
+  <td>700K+ practitioners</td>
+</tr>
+<tr>
+  <td>Nursing Homes</td>
+  <td>❌ No</td>
+  <td>✅ Yes</td>
+  <td>Large</td>
+</tr>
+</tbody>
+</table>
+
+<h3>User Roles</h3>
+
+<p><strong>Healthcare Facilities:</strong><br />
+- Create profile with verification<br />
+- Post locum shifts (department, dates, requirements)<br />
+- Browse/select applicants<br />
+- Review professionals after shift</p>
+
+<p><strong>Healthcare Professionals:</strong><br />
+- Create profile with qualifications, license uploads<br />
+- Browse shifts by department/date/location<br />
+- Apply with personalized messages<br />
+- Review hospitals after shift</p>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- Which city has highest locum demand? (Medical insight)<br />
+- What's typical shift duration? (4h? 8h? 12h? 24h?)<br />
+- What credentials should we verify? (License? Degree? Experience?)</p>
+
+<hr />
+
+<h2>Slide 6: Business Model &amp; Pricing (10 min)</h2>
+
+<h3>Revenue Model Options</h3>
+
+<p><strong>Option A: Commission Per Shift</strong><br />
+- Hospital pays ₹X per filled shift<br />
+- Simple, scalable<br />
+- Risk: Hospital might negotiate down</p>
+
+<p><strong>Option B: Subscription (Freemium)</strong><br />
+- Free: Post 2 shifts/month<br />
+- Paid: ₹2000/month for unlimited shifts<br />
+- Risk: Hospitals reluctant to subscribe before trying</p>
+
+<p><strong>Option C: Hybrid (Recommended)</strong><br />
+- Free to post, ₹200 per filled shift<br />
+- Premium tier: ₹5000/month for priority matching + analytics<br />
+- Low barrier to entry, revenue scales with usage</p>
+
+<h3>Pricing Reference</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Service</th>
+  <th>Traditional Agency</th>
+  <th>Medibrick Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Commission</td>
+  <td>20-30% of salary</td>
+  <td>₹200 flat per shift</td>
+</tr>
+<tr>
+  <td>Subscription</td>
+  <td>N/A</td>
+  <td>₹5000/month (premium)</td>
+</tr>
+<tr>
+  <td>Setup Fee</td>
+  <td>₹5000-10000</td>
+  <td>Free</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Professional Side</h3>
+
+<ul>
+<li>Free to join, free to apply</li>
+<li>Deposit: ₹500-2000 (refundable on completion)</li>
+<li>No platform fees for professionals</li>
+</ul>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- What's the right price point for hospitals? (₹100? ₹200? ₹500?)<br />
+- Should professionals pay anything beyond deposit?<br />
+- Is deposit refundable immediately or after review period?</p>
+
+<hr />
+
+<h2>Slide 7: Technical Architecture (5 min)</h2>
+
+<h3>Current Stack</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Layer</th>
+  <th>Technology</th>
+  <th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Frontend</td>
+  <td>Lovable (no-code/low-code)</td>
+  <td>✅ Built</td>
+</tr>
+<tr>
+  <td>Database</td>
+  <td>Supabase (PostgreSQL)</td>
+  <td>✅ Set up</td>
+</tr>
+<tr>
+  <td>Hosting</td>
+  <td>Vercel (planned)</td>
+  <td>🟡 Not deployed</td>
+</tr>
+<tr>
+  <td>Auth</td>
+  <td>To be decided</td>
+  <td>🔴 Not started</td>
+</tr>
+<tr>
+  <td>Payments</td>
+  <td>To be decided (Razorpay?)</td>
+  <td>🔴 Not started</td>
+</tr>
+<tr>
+  <td>Backend</td>
+  <td>Not used</td>
+  <td>N/A</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Security Concerns (CRITICAL)</h3>
+
+<ol>
+<li><strong>RLS (Row Level Security)</strong> — Currently unclear if ON</li>
+<li><strong>Connection pooling</strong> — Will hit limit at 50 users</li>
+<li><strong>Security headers</strong> — Missing CSP, CORS</li>
+<li><strong>Rate limiting</strong> — Not implemented</li>
+</ol>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- Do we need a technical cofounder/contractor for backend?<br />
+- Can we validate without full tech stack? (WhatsApp/manual first)</p>
+
+<hr />
+
+<h2>Slide 8: Go-to-Market &amp; Accelerators (5 min)</h2>
+
+<h3>Accelerator Opportunities (Apply Now)</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Program</th>
+  <th>Deadline</th>
+  <th>Fit</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Saamarthya 6.0 (IIHMR)</strong></td>
+  <td>Open now</td>
+  <td>⭐⭐⭐ Perfect — healthcare staffing</td>
+  <td><strong>Apply this week</strong></td>
+</tr>
+<tr>
+  <td><strong>NSRCEL Impact Orbit (IIMB)</strong></td>
+  <td>Open now</td>
+  <td>⭐⭐⭐ Strong — healthcare for ageing</td>
+  <td><strong>Apply this week</strong></td>
+</tr>
+<tr>
+  <td>T-Hub Healthcare</td>
+  <td>Feb 28, 2026</td>
+  <td>⭐⭐⭐ Strong — hospital tech</td>
+  <td>Apply</td>
+</tr>
+<tr>
+  <td>OJAS-MedTech (IIIT-H)</td>
+  <td>Twice/year</td>
+  <td>⭐⭐ Good — marketplace focus</td>
+  <td>Watch</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Why Accelerators Matter</h3>
+
+<ul>
+<li>Funding (₹10L-₹50L grants)</li>
+<li>Hospital network introductions</li>
+<li>Mentorship from healthcare industry</li>
+<li>Credibility for hospital sales</li>
+</ul>
+
+<h3>Immediate Outreach</h3>
+
+<ul>
+<li>Target: 10 Bengaluru hospitals this month</li>
+<li>Channel: LinkedIn + WhatsApp + direct calls</li>
+<li>Message: "First 3 shifts free, 95% show rate guarantee"</li>
+</ul>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- Do you have hospital contacts we can approach? (Warm intros)<br />
+- Which accelerator is most relevant for medical credibility?<br />
+- Should we apply to multiple or focus on one?</p>
+
+<hr />
+
+<h2>Slide 9: Risks &amp; Mitigations (5 min)</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Risk</th>
+  <th>Likelihood</th>
+  <th>Impact</th>
+  <th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Jobizo adds deposit system</td>
+  <td>Medium</td>
+  <td>High</td>
+  <td>Move fast, build density first</td>
+</tr>
+<tr>
+  <td>Hospital won't pay upfront</td>
+  <td>Medium</td>
+  <td>High</td>
+  <td>Offer escrow via Razorpay (trust)</td>
+</tr>
+<tr>
+  <td>Professional won't pay deposit</td>
+  <td>Low</td>
+  <td>Medium</td>
+  <td>Start with ₹500, refundable immediately</td>
+</tr>
+<tr>
+  <td>Regulatory issues (medical licensing)</td>
+  <td>Medium</td>
+  <td>High</td>
+  <td>Verify licenses, partner with medical councils</td>
+</tr>
+<tr>
+  <td>Low initial supply (professionals)</td>
+  <td>High</td>
+  <td>High</td>
+  <td>Seed with 50 profiles before launch</td>
+</tr>
+<tr>
+  <td>Low initial demand (hospitals)</td>
+  <td>High</td>
+  <td>High</td>
+  <td>Pilot with 5 hospitals, case study</td>
+</tr>
+<tr>
+  <td>Platform tech failures</td>
+  <td>Medium</td>
+  <td>High</td>
+  <td>WhatsApp fallback, manual backup</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- What's the biggest risk from medical perspective?<br />
+- Are there regulatory barriers we haven't considered?<br />
+- What's Plan B if tech doesn't work?</p>
+
+<hr />
+
+<h2>Slide 10: Next 2 Weeks — Action Plan (10 min)</h2>
+
+<h3>Week 1 Priorities</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Day</th>
+  <th>Task</th>
+  <th>Owner</th>
+  <th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Mon</td>
+  <td>Verify Supabase RLS + security</td>
+  <td>Gagan</td>
+  <td>Secure DB</td>
+</tr>
+<tr>
+  <td>Tue</td>
+  <td>Define minimum viable pilot</td>
+  <td>Both</td>
+  <td>Agreement on MVP scope</td>
+</tr>
+<tr>
+  <td>Wed</td>
+  <td>Create 50 seed professional profiles</td>
+  <td>Cofounder</td>
+  <td>Profiles ready</td>
+</tr>
+<tr>
+  <td>Thu</td>
+  <td>Outreach to 5 hospitals</td>
+  <td>Cofounder</td>
+  <td>Meetings booked</td>
+</tr>
+<tr>
+  <td>Fri</td>
+  <td>Apply to Saamarthya + NSRCEL</td>
+  <td>Gagan</td>
+  <td>Applications submitted</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Week 2 Priorities</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Task</th>
+  <th>Owner</th>
+  <th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Hospital meetings + feedback</td>
+  <td>Both</td>
+  <td>3+ hospital interviews</td>
+</tr>
+<tr>
+  <td>Revise pitch based on feedback</td>
+  <td>Both</td>
+  <td>Updated battlecard</td>
+</tr>
+<tr>
+  <td>Set up payment flow (Razorpay)</td>
+  <td>Gagan</td>
+  <td>Escrow prototype</td>
+</tr>
+<tr>
+  <td>Create WhatsApp notification system</td>
+  <td>Gagan</td>
+  <td>Manual alerts working</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Decision Matrix</h3>
+
+<table>
+<thead>
+<tr>
+  <th>If Hospital Says</th>
+  <th>Then We Do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>"We want to try"</td>
+  <td>Manual matching via WhatsApp/phone</td>
+</tr>
+<tr>
+  <td>"We need tech platform"</td>
+  <td>Build basic shift posting + application</td>
+</tr>
+<tr>
+  <td>"We want integration"</td>
+  <td>Full platform with payment + reviews</td>
+</tr>
+<tr>
+  <td>"We need approval from board"</td>
+  <td>Provide case studies, offer pilot terms</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Cofounder Input Needed:</strong><br />
+- Can you take lead on hospital outreach? (Medical credibility)<br />
+- Should we build tech first or validate manually?<br />
+- What's your availability for meetings next 2 weeks?</p>
+
+<hr />
+
+<h2>Slide 11: Immediate Decisions Needed (10 min)</h2>
+
+<h3>Decision #1: MVP Scope</h3>
+
+<p><strong>Question:</strong> What's the minimum to test with 1 hospital?<br />
+- [ ] Full platform (4-6 weeks)<br />
+- [ ] Basic shift posting + WhatsApp alerts (1-2 weeks)<br />
+- [ ] Pure manual (WhatsApp + phone + spreadsheet) (this week)</p>
+
+<h3>Decision #2: First Target Segment</h3>
+
+<p><strong>Question:</strong> Which segment do we approach first?<br />
+- [ ] Large hospitals (high volume, slow decisions)<br />
+- [ ] Small clinics (faster decisions, lower volume)<br />
+- [ ] Diagnostic chains (seasonal peaks, need technicians)<br />
+- [ ] Ayurvedic centers (untapped market, no competition)</p>
+
+<h3>Decision #3: Cofounder Roles</h3>
+
+<p><strong>Question:</strong> Who owns what?<br />
+- [ ] <strong>Gagan:</strong> Tech + Operations + Accelerators + Fundraising<br />
+- [ ] <strong>Arpana:</strong> Medical strategy + Hospital sales + Professional onboarding + Medical credibility<br />
+- [ ] <strong>Both:</strong> Strategy + Key decisions + Hospital relationship building</p>
+
+<h3>How Arpana's Medical Background Helps</h3>
+
+<ul>
+<li><strong>Hospital Trust:</strong> Doctors trust doctors — Arpana's credentials open doors</li>
+<li><strong>Medical Accuracy:</strong> Ensures platform speaks the right language (departments, certifications, shift types)</li>
+<li><strong>Professional Recruitment:</strong> Can recruit doctors/nurses from her network</li>
+<li><strong>Clinical Validation:</strong> Validates what actually matters vs what's nice-to-have</li>
+<li><strong>Regulatory Guidance:</strong> Understands medical licensing, hospital admin, compliance</li>
+</ul>
+
+<p><strong>Question for Arpana:</strong> What hospitals/clinics do you have connections with for warm intros?</p>
+
+<h3>Decision #4: Timeline</h3>
+
+<p><strong>Question:</strong> When do we want first paid shift?<br />
+- [ ] This month (aggressive — manual matching)<br />
+- [ ] Next month (realistic — basic tech)<br />
+- [ ] 3 months (conservative — full platform)</p>
+
+<hr />
+
+<h2>Slide 12: Closing &amp; Next Steps (5 min)</h2>
+
+<h3>Meeting Output</h3>
+
+<ul>
+<li>[ ] Decisions documented</li>
+<li>[ ] Action items assigned with owners</li>
+<li>[ ] Next meeting scheduled</li>
+<li>[ ] Immediate tasks for this week</li>
+</ul>
+
+<h3>Resources</h3>
+
+<ul>
+<li>Competitive analysis: <code>medibrick/jobizo-competitive-analysis.md</code></li>
+<li>Sales battlecard: <code>medibrick/jobizo-sales-battlecard.md</code></li>
+<li>Outreach templates: <code>medibrick/outreach-templates-jobizo.md</code></li>
+<li>Launch checklist: <code>medibrick/launch-checklist.md</code></li>
+</ul>
+
+<h3>Next Meeting</h3>
+
+<p><strong>Date:</strong> [To be decided]<br />
+<strong>Agenda:</strong> Review hospital feedback, revise MVP, accelerator updates</p>
+
+<hr />
+
+<h2>Appendix: Quick Reference</h2>
+
+<h3>Key Metrics to Track</h3>
+
+<ul>
+<li>Shifts posted per week</li>
+<li>Applications per shift</li>
+<li>Fill rate (%)</li>
+<li>Time-to-fill (hours)</li>
+<li>Show rate (%)</li>
+<li>Payment speed (hours)</li>
+<li>Review scores (both sides)</li>
+<li>Repeat usage rate</li>
+</ul>
+
+<h3>Competitor Monitoring</h3>
+
+<ul>
+<li>Jobizo feature changes</li>
+<li>New entrants in healthcare staffing</li>
+<li>Hospital partnership announcements</li>
+<li>Funding news in healthcare staffing</li>
+</ul>
+
+<h3>Contact Strategy</h3>
+
+<ul>
+<li>Day 0: Initial outreach (email + LinkedIn)</li>
+<li>Day 3: Follow-up #1 (WhatsApp)</li>
+<li>Day 7: Follow-up #2 (email with case study)</li>
+<li>Day 14: Final follow-up (phone call)</li>
+<li>Day 30: Nurture (monthly newsletter)</li>
+</ul>
+
+<hr />
+
+<p><em>Meeting prepared by: Star (Medibrick AI Assistant)</em><br />
+<em>Date: 2026-06-01</em></p>
+
+</body>
+</html>

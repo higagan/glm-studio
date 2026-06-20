@@ -1,0 +1,34 @@
+---
+description: Save product review and E2E validation reports to the Cursor Desktop reports folder
+alwaysApply: true
+---
+
+# Product reports location
+
+When generating product reviews, E2E validation reports, checklists, or screenshot galleries for MediBrick:
+
+**Primary output (always write here):**
+
+`/Users/gagandeep/Desktop/cursor/reports/`
+
+Use subfolders per review run:
+
+`/Users/gagandeep/Desktop/cursor/reports/YYYY-MM-DD_HHmmss_<review-type>/`
+
+After each run, update at the **top** of the reports folder (sorts first by name):
+
+- `00-LATEST.md` — index pointing to the newest run
+- `01-latest/` — symlink to the newest run (open this anytime for the current report)
+
+Older timestamped folders remain below for history.
+
+Include:
+- Markdown summary (`*-review.md`)
+- JSON machine report when applicable (`*-report.json`)
+- Screenshots under `screenshots/` inside the same subfolder
+
+**Optional mirror in repo:** `docs/*-review/` only if the user asks for in-repo copies.
+
+**Scripts:** Use `scripts/product-review/cursor-reports-path.mjs` for the default path. Override with `--out=<dir>`.
+
+Do not commit Cursor-folder reports unless the user explicitly requests it.

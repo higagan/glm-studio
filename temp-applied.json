@@ -1,0 +1,22 @@
+[
+  {
+    "job": "Job 1",
+    "status": "applied"
+  },
+  {
+    "job": "Job 2",
+    "status": "uncertain"
+  },
+  {
+    "job": "Job 3",
+    "status": "applied"
+  },
+  {
+    "job": "Job 4",
+    "status": "uncertain"
+  },
+  {
+    "job": "Job 5",
+    "status": "uncertain"
+  }
+]

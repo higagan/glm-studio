@@ -1,0 +1,36 @@
+{
+  "platform": "linkedin",
+  "timestamp": "2026-06-18T22:09:33.091928",
+  "total_attempted": 4,
+  "total_applied": 0,
+  "results": [
+    {
+      "job": {
+        "jobId": "4428485195",
+        "title": "Freelance GenAI Engineer (Python | LLM | AI Agents)"
+      },
+      "status": "no_easy_apply"
+    },
+    {
+      "job": {
+        "jobId": "4424075159",
+        "title": "Senior Backend Developer (Python, Serverless & GenAI)"
+      },
+      "status": "no_easy_apply"
+    },
+    {
+      "job": {
+        "jobId": "4419154369",
+        "title": "AI Engineer (3+ Years) \u2013 Python, ML, GenAI & Agentic AI - Immediate Joiners"
+      },
+      "status": "no_easy_apply"
+    },
+    {
+      "job": {
+        "jobId": "4417619404",
+        "title": "GenAI & Agentic AI"
+      },
+      "status": "no_easy_apply"
+    }
+  ]
+}

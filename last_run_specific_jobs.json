@@ -1,0 +1,170 @@
+{
+  "platform": "linkedin_specific",
+  "timestamp": "2026-06-19T15:59:40.280858",
+  "total": 20,
+  "applied": 1,
+  "skipped": 2,
+  "failed": 17,
+  "results": [
+    {
+      "jobId": "4429010932",
+      "title": "Lead AI Scientist / Engineer",
+      "company": "SecPod",
+      "status": "failed",
+      "detail": "Page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"https://www.linkedin.com/jobs/search/?keywords=Lead%20AI%20Scientist%20/%20Engineer%20SecPod&f_AL=true&origin=JOB_SEARCH_PAGE_JOB_FILT",
+      "elapsedSec": 90.2
+    },
+    {
+      "jobId": "4425370730",
+      "title": "Senior Agentic AI Engineer",
+      "company": "Interactly.ai",
+      "status": "failed",
+      "detail": "Page.goto: Target page, context or browser has been closed\nCall log:\n  - navigating to \"https://www.linkedin.com/jobs/search/?keywords=Senior%20Agentic%20AI%20Engineer%20Interactly.ai&f_AL=true&origin",
+      "elapsedSec": 25.6
+    },
+    {
+      "jobId": "4407045907",
+      "title": "Agentic AI Engineer",
+      "company": "Tata Consultancy Services",
+      "status": "applied",
+      "detail": "Application submitted",
+      "elapsedSec": 63.8
+    },
+    {
+      "jobId": "4416582017",
+      "title": "GenAI / Agentic AI Engineer",
+      "company": "Persistent Systems",
+      "status": "failed",
+      "detail": "Page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"https://www.linkedin.com/jobs/search/?keywords=GenAI%20/%20Agentic%20AI%20Engineer%20Persistent%20Systems&f_AL=true&origin=JOB_SEARCH_",
+      "elapsedSec": 90.1
+    },
+    {
+      "jobId": "4425730587",
+      "title": "AI Systems Engineer (Agentic Development)",
+      "company": "Soar",
+      "status": "skipped",
+      "detail": "Job not found in search results",
+      "elapsedSec": 0
+    },
+    {
+      "jobId": "4399953774",
+      "title": "Gen AI \u2013 Manager",
+      "company": "PwC Acceleration Center India",
+      "status": "skipped",
+      "detail": "Job not found in search results",
+      "elapsedSec": 0
+    },
+    {
+      "jobId": "4429242530",
+      "title": "Lead AI Engineer",
+      "company": "Figr",
+      "status": "failed",
+      "detail": "Page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"https://www.linkedin.com/jobs/search/?keywords=Lead%20AI%20Engineer%20Figr&f_AL=true&origin=JOB_SEARCH_PAGE_JOB_FILTER\", waiting until",
+      "elapsedSec": 90.1
+    },
+    {
+      "jobId": "4426941280",
+      "title": "Generative AI Engineer",
+      "company": "Accion Labs",
+      "status": "failed",
+      "detail": "Target page, context or browser has been closed",
+      "elapsedSec": 69.4
+    },
+    {
+      "jobId": "4417204290",
+      "title": "Applied AI Engineer",
+      "company": "HackerRank",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4430921639",
+      "title": "Applied AI Engineer",
+      "company": "Cognite",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4415204343",
+      "title": "Senior Development Manager \u2013 AI Engineering",
+      "company": "PepsiCo",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4427494266",
+      "title": "AES \u2013 Generative AI",
+      "company": "Zensar Technologies",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4429239594",
+      "title": "GEN AI Engineer",
+      "company": "Johnson Electric",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4414310462",
+      "title": "AI Engineer",
+      "company": "PepsiCo",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4384070518",
+      "title": "AI / ML Engineer",
+      "company": "Accenture in India",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4427707068",
+      "title": "Generative AI Engineer",
+      "company": "Recro",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4428110157",
+      "title": "AI Engineer",
+      "company": "Ecolab",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4430108501",
+      "title": "AI Engineer II",
+      "company": "RealPage India",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4430467621",
+      "title": "AI Engineer",
+      "company": "Clinisys",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    },
+    {
+      "jobId": "4429007989",
+      "title": "AI Engineer",
+      "company": "Blumetra Solutions",
+      "status": "failed",
+      "detail": "BrowserContext.new_page: Target page, context or browser has been closed",
+      "elapsedSec": 0.0
+    }
+  ]
+}

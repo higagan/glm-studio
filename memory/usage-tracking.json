@@ -1,0 +1,47 @@
+{
+  "startDate": "2026-05-22",
+  "trackingEnabled": true,
+  "lastReport": "2026-06-07",
+  "allModels": {
+    "cloud": [
+      "kimi-k2.6:cloud",
+      "minimax-m3:cloud", 
+      "mistral-large-3:675b-cloud",
+      "qwen3-coder:480b-cloud"
+    ],
+    "local": [
+      "qwen2.5-coder:14b",
+      "qwen-fast:latest",
+      "qwen2.5-coder:7b",
+      "gemma3:1b",
+      "llama3.1:8b",
+      "deepseek-r1:8b",
+      "llama3.2:3b",
+      "mistral:latest",
+      "qwen2.5:7b",
+      "llama3.1:latest"
+    ]
+  },
+  "cloudModelUsage": {
+    "kimi-k2.6:cloud": { "tier": 1, "usage": "heavy (cron jobs + complex tasks)", "costEstimate": 12, "failRate": "15%", "bestFor": "complex reasoning, architecture decisions, important tasks", "fallback": "qwen2.5:7b" },
+    "minimax-m3:cloud": { "tier": 1, "usage": "medium (scouting + summaries)", "costEstimate": 4, "failRate": "10%", "bestFor": "fast efficient tasks, scouting, simple queries", "fallback": "qwen2.5:7b" },
+    "qwen3-coder:480b-cloud": { "tier": 2, "usage": "low (coding fallback)", "costEstimate": 2, "failRate": "15%", "bestFor": "coding tasks when local model insufficient", "fallback": "qwen2.5-coder:14b" }
+  },
+  "localModelUsage": {
+    "deepseek-r1:8b": { "tier": 2, "usage": "fallback", "bestFor": "reasoning when cloud fails", "kept": true },
+    "qwen2.5:7b": { "tier": 2, "usage": "primary fallback", "bestFor": "fast general tasks when cloud fails", "kept": true },
+    "llama3.1:8b": { "tier": 2, "usage": "occasional fallback", "bestFor": "balanced chat", "kept": true },
+    "qwen2.5-coder:14b": { "tier": 2, "usage": "coding fallback", "bestFor": "coding when cloud fails", "kept": true },
+    "qwen-fast:latest": { "tier": 3, "usage": "ultra-fast", "bestFor": "quick drafts", "kept": true },
+    "nomic-embed-text": { "tier": 3, "usage": "embeddings", "bestFor": "RAG/embeddings", "kept": true },
+    "medgemma:4b": { "tier": 3, "usage": "specialized", "bestFor": "medical domain tasks", "kept": true }
+  },
+  "removedModels": ["llama3.1:latest", "llama3.2:3b", "mistral:latest", "gemma3:1b"],
+  "diskSpaceSavedGB": 15,
+  "ollamaProCost": 20,
+  "estimatedCloudUsageValue": 8,
+  "claudeEquivalentEstimate": 20,
+  "weeklyReportCron": "ollama-weekly-usage-report",
+  "weeklyReportSchedule": "Mondays 9am IST",
+  "notes": "Tracking started 2026-05-22. Weekly reports enabled 2026-06-07. All 4 cloud models tracked: kimi, minimax, mistral-large, qwen3-coder. Main usage: kimi-k2.6:cloud for cron jobs (~40% failure rate). Local models: deepseek-r1:8b, qwen2.5:7b, llama3.1:8b most active."
+}

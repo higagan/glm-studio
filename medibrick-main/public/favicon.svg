@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 52" width="56" height="52">
+  <defs>
+    <clipPath id="heart-clip">
+      <path d="M28 48.5s-18-12.5-18-26C10 12.5 16.5 6 23.5 6c3.2 0 5.8 1.4 7.2 3.6C32.3 7.4 34.9 6 38 6 45 6 51.5 12.5 51.5 22.5c0 13.5-18 26-18 26h-5.5z" />
+    </clipPath>
+  </defs>
+  <path
+    fill="#E63946"
+    d="M28 48.5s-18-12.5-18-26C10 12.5 16.5 6 23.5 6c3.2 0 5.8 1.4 7.2 3.6C32.3 7.4 34.9 6 38 6 45 6 51.5 12.5 51.5 22.5c0 13.5-18 26-18 26h-5.5z"
+  />
+  <g clip-path="url(#heart-clip)">
+    <path
+      d="M10.5 42.5V8.2c0-1.8 1.5-3 3.3-3 1.5 0 2.8.9 3.6 2.4l10.8 16 10.8-16c.8-1.5 2.1-2.4 3.6-2.4 1.8 0 3.3 1.2 3.3 3V42.5"
+      stroke="#fff"
+      stroke-width="7.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+    <path
+      d="M41.5 42.5h2.8l2.2-5.2 2.2 5.2h2.7l2.3-5.5 2.3 5.5h2.7l2.4-5.7 2.4 5.7H59"
+      stroke="#fff"
+      stroke-width="4.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+  </g>
+</svg>

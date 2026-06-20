@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MediBricks — UX Review Package</title>
+  <style>
+    :root { --bg: #0f1419; --card: #1a2332; --text: #e8edf4; --muted: #8b9cb3; --accent: #3b82f6; --border: #2a3548; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+    .hero { padding: 2rem 1.5rem; border-bottom: 1px solid var(--border); max-width: 1200px; margin: 0 auto; }
+    .hero h1 { margin: 0 0 0.5rem; font-size: 1.75rem; }
+    .hero p { margin: 0.25rem 0; color: var(--muted); }
+    .hero a { color: var(--accent); }
+    nav.toc { padding: 1rem 1.5rem; max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    nav.toc a { font-size: 0.85rem; padding: 0.35rem 0.75rem; background: var(--card); border: 1px solid var(--border); border-radius: 999px; color: var(--text); text-decoration: none; }
+    main { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem 4rem; }
+    section { margin-bottom: 3rem; }
+    section > h2 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 1.25rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .card h3 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+    .meta { margin: 0 0 1rem; font-size: 0.85rem; color: var(--muted); }
+    .shots { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media (min-width: 900px) { .shots { grid-template-columns: 1fr 1.4fr; } }
+    figure { margin: 0; }
+    figcaption { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+    .brief { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; }
+    .brief h2 { margin-top: 0; font-size: 1rem; }
+    .brief ul { margin: 0.5rem 0 0; padding-left: 1.25rem; color: var(--muted); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>MediBricks — UX / Product Review Package</h1>
+    <p>Captured 2026-06-15 from <a href="https://medibrick.com">https://medibrick.com</a></p>
+    <p>16 screens · mobile + desktop · see <a href="ADVISOR_BRIEF.md">ADVISOR_BRIEF.md</a> for review questions</p>
+  </header>
+  <nav class="toc">
+    <a href="#marketing">Marketing</a><a href="#marketplace">Marketplace</a><a href="#content">Content</a><a href="#auth">Auth</a><a href="#onboarding">Onboarding</a><a href="#admin">Admin</a><a href="#system">System</a>
+  </nav>
+  <main>
+    <div class="brief">
+      <h2>Priority journeys for reviewer</h2>
+      <ul>
+        <li><strong>A — WhatsApp → Apply:</strong> Job detail (mobile) → Auth → Complete profile → Applied</li>
+        <li><strong>B — Browse:</strong> Jobs list → filters → job detail → hospital profile</li>
+        <li><strong>C — Hospital:</strong> For Hospitals page → signup → dashboard (not screenshotted — needs login)</li>
+        <li><strong>D — Trust:</strong> Homepage → Verification process → hospital profile</li>
+      </ul>
+    </div>
+    <section id="marketing"><h2>Marketing</h2>
+      <article class="card" id="01-home">
+        <header>
+          <h3>Homepage</h3>
+          <p class="meta">/ · <a href="https://medibrick.com/" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/01-home.png"><img src="screenshots/mobile/01-home.png" alt="Homepage mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/01-home.png"><img src="screenshots/desktop/01-home.png" alt="Homepage desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="02-for-hospitals">
+        <header>
+          <h3>For Hospitals</h3>
+          <p class="meta">/for-hospitals · <a href="https://medibrick.com/for-hospitals" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/02-for-hospitals.png"><img src="screenshots/mobile/02-for-hospitals.png" alt="For Hospitals mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/02-for-hospitals.png"><img src="screenshots/desktop/02-for-hospitals.png" alt="For Hospitals desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="03-for-professionals">
+        <header>
+          <h3>For Professionals</h3>
+          <p class="meta">/for-professionals · <a href="https://medibrick.com/for-professionals" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/03-for-professionals.png"><img src="screenshots/mobile/03-for-professionals.png" alt="For Professionals mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/03-for-professionals.png"><img src="screenshots/desktop/03-for-professionals.png" alt="For Professionals desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="04-how-it-works">
+        <header>
+          <h3>How It Works</h3>
+          <p class="meta">/how-it-works · <a href="https://medibrick.com/how-it-works" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/04-how-it-works.png"><img src="screenshots/mobile/04-how-it-works.png" alt="How It Works mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/04-how-it-works.png"><img src="screenshots/desktop/04-how-it-works.png" alt="How It Works desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="05-verification">
+        <header>
+          <h3>Verification Process</h3>
+          <p class="meta">/verification-process · <a href="https://medibrick.com/verification-process" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/05-verification.png"><img src="screenshots/mobile/05-verification.png" alt="Verification Process mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/05-verification.png"><img src="screenshots/desktop/05-verification.png" alt="Verification Process desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article></section><section id="marketplace"><h2>Marketplace</h2>
+      <article class="card" id="06-jobs-list">
+        <header>
+          <h3>Jobs listing</h3>
+          <p class="meta">/jobs · <a href="https://medibrick.com/jobs" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/06-jobs-list.png"><img src="screenshots/mobile/06-jobs-list.png" alt="Jobs listing mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/06-jobs-list.png"><img src="screenshots/desktop/06-jobs-list.png" alt="Jobs listing desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="07-jobs-landing-doctors">
+        <header>
+          <h3>SEO landing — Doctors</h3>
+          <p class="meta">/jobs/landing/doctors · <a href="https://medibrick.com/jobs/landing/doctors" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/07-jobs-landing-doctors.png"><img src="screenshots/mobile/07-jobs-landing-doctors.png" alt="SEO landing — Doctors mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/07-jobs-landing-doctors.png"><img src="screenshots/desktop/07-jobs-landing-doctors.png" alt="SEO landing — Doctors desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="08-nearby">
+        <header>
+          <h3>Nearby jobs</h3>
+          <p class="meta">/nearby · <a href="https://medibrick.com/nearby" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/08-nearby.png"><img src="screenshots/mobile/08-nearby.png" alt="Nearby jobs mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/08-nearby.png"><img src="screenshots/desktop/08-nearby.png" alt="Nearby jobs desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="15-job-detail">
+        <header>
+          <h3>Job detail — orthopaedic-surgeon-joint-replacement-bengaluru-e0000000</h3>
+          <p class="meta">/jobs/orthopaedic-surgeon-joint-replacement-bengaluru-e0000000 · <a href="https://medibrick.com/jobs/orthopaedic-surgeon-joint-replacement-bengaluru-e0000000" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/15-job-detail.png"><img src="screenshots/mobile/15-job-detail.png" alt="Job detail — orthopaedic-surgeon-joint-replacement-bengaluru-e0000000 mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/15-job-detail.png"><img src="screenshots/desktop/15-job-detail.png" alt="Job detail — orthopaedic-surgeon-joint-replacement-bengaluru-e0000000 desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="16-hospital-profile">
+        <header>
+          <h3>Hospital profile — columbia-asia-hospital-whitefield</h3>
+          <p class="meta">/hospitals/columbia-asia-hospital-whitefield · <a href="https://medibrick.com/hospitals/columbia-asia-hospital-whitefield" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/16-hospital-profile.png"><img src="screenshots/mobile/16-hospital-profile.png" alt="Hospital profile — columbia-asia-hospital-whitefield mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/16-hospital-profile.png"><img src="screenshots/desktop/16-hospital-profile.png" alt="Hospital profile — columbia-asia-hospital-whitefield desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article></section><section id="content"><h2>Content</h2>
+      <article class="card" id="09-blog">
+        <header>
+          <h3>Blog index</h3>
+          <p class="meta">/blog · <a href="https://medibrick.com/blog" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/09-blog.png"><img src="screenshots/mobile/09-blog.png" alt="Blog index mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/09-blog.png"><img src="screenshots/desktop/09-blog.png" alt="Blog index desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article></section><section id="auth"><h2>Auth</h2>
+      <article class="card" id="10-auth-main">
+        <header>
+          <h3>Auth — entry</h3>
+          <p class="meta">/auth · <a href="https://medibrick.com/auth" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/10-auth-main.png"><img src="screenshots/mobile/10-auth-main.png" alt="Auth — entry mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/10-auth-main.png"><img src="screenshots/desktop/10-auth-main.png" alt="Auth — entry desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article>
+      <article class="card" id="11-auth-phone">
+        <header>
+          <h3>Auth — phone form</h3>
+          <p class="meta">/auth · <a href="https://medibrick.com/auth" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/11-auth-phone.png"><img src="screenshots/mobile/11-auth-phone.png" alt="Auth — phone form mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/11-auth-phone.png"><img src="screenshots/desktop/11-auth-phone.png" alt="Auth — phone form desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article></section><section id="onboarding"><h2>Onboarding</h2>
+      <article class="card" id="12-complete-profile">
+        <header>
+          <h3>Complete profile (gate)</h3>
+          <p class="meta">/complete-profile · <a href="https://medibrick.com/complete-profile" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/12-complete-profile.png"><img src="screenshots/mobile/12-complete-profile.png" alt="Complete profile (gate) mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/12-complete-profile.png"><img src="screenshots/desktop/12-complete-profile.png" alt="Complete profile (gate) desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article></section><section id="admin"><h2>Admin</h2>
+      <article class="card" id="13-admin-login">
+        <header>
+          <h3>Founder admin login</h3>
+          <p class="meta">/admin/login · <a href="https://medibrick.com/admin/login" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/13-admin-login.png"><img src="screenshots/mobile/13-admin-login.png" alt="Founder admin login mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/13-admin-login.png"><img src="screenshots/desktop/13-admin-login.png" alt="Founder admin login desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article></section><section id="system"><h2>System</h2>
+      <article class="card" id="14-not-found">
+        <header>
+          <h3>404</h3>
+          <p class="meta">/this-page-does-not-exist · <a href="https://medibrick.com/this-page-does-not-exist" target="_blank" rel="noopener">live</a></p>
+        </header>
+        <div class="shots">
+          <figure>
+            <figcaption>Mobile (primary)</figcaption>
+            <a href="screenshots/mobile/14-not-found.png"><img src="screenshots/mobile/14-not-found.png" alt="404 mobile" loading="lazy" /></a>
+          </figure>
+          <figure>
+            <figcaption>Desktop</figcaption>
+            <a href="screenshots/desktop/14-not-found.png"><img src="screenshots/desktop/14-not-found.png" alt="404 desktop" loading="lazy" /></a>
+          </figure>
+        </div>
+      </article></section>
+  </main>
+</body>
+</html>

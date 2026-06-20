@@ -1,0 +1,301 @@
+{
+  "capturedAt": "2026-06-16T19:39:34.362Z",
+  "base": "https://medibrick.com",
+  "job": {
+    "id": "5e561d2d-690e-49f0-b48f-68c522fead00",
+    "slug": "intensivist-bengaluru-5e561d2d",
+    "title": "intensivist"
+  },
+  "summary": {
+    "passed": 10,
+    "failed": 5,
+    "total": 15
+  },
+  "founderDashboard": {
+    "dbEventsLast30min": 0,
+    "eventChecks": [
+      {
+        "event": "job_viewed",
+        "pass": true
+      },
+      {
+        "event": "apply_clicked",
+        "pass": true
+      },
+      {
+        "event": "apply_requires_auth",
+        "pass": true
+      },
+      {
+        "event": "application_submitted",
+        "pass": false
+      }
+    ],
+    "note": "Founder metrics read from product_events table (anon RLS may limit rows)"
+  },
+  "results": [
+    {
+      "step": "Browse Jobs",
+      "case": "Case 1",
+      "viewport": "desktop",
+      "expected": "Jobs listing loads",
+      "actual": "On /jobs",
+      "pass": true,
+      "events": [
+        "page_view",
+        "job_viewed"
+      ],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Open Job Detail",
+      "case": "Case 1",
+      "viewport": "desktop",
+      "expected": "Job detail at /jobs/intensivist-bengaluru-5e561d2d + job_viewed event",
+      "actual": "https://medibrick.com/jobs/intensivist-bengaluru-5e561d2d | job_viewed=true",
+      "pass": true,
+      "events": [
+        "page_view",
+        "job_viewed",
+        "job_viewed"
+      ],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Click Apply → Auth",
+      "case": "Case 1",
+      "viewport": "desktop",
+      "expected": "Redirect to /auth; job slug/id + return URL persisted",
+      "actual": "url=https://medibrick.com/auth redirect=/jobs/intensivist-bengaluru-5e561d2d jobId=5e561d2d-690e-49f0-b48f-68c522fead00",
+      "pass": true,
+      "events": [
+        "page_view",
+        "job_viewed",
+        "job_viewed",
+        "apply_clicked",
+        "apply_requires_auth",
+        "page_view"
+      ],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Auth shows job context card",
+      "case": "Case 1",
+      "viewport": "desktop",
+      "expected": "\"Continue your application\" + job title visible",
+      "actual": "Shows \"intensivist\"",
+      "pass": true,
+      "events": [],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Login with Google",
+      "case": "Case 1",
+      "viewport": "desktop",
+      "expected": "OAuth → return to same job with ?apply=resume",
+      "actual": "NOT AUTOMATED — requires manual Google OAuth in browser",
+      "pass": false,
+      "events": [],
+      "ux": [],
+      "risks": [
+        "Google OAuth path unverified in this run — highest-traffic auth method"
+      ],
+      "severity": "P0"
+    },
+    {
+      "step": "Browser back after Apply→Auth",
+      "case": "Back button",
+      "viewport": "desktop",
+      "expected": "Back returns to job detail; intent still persisted",
+      "actual": "back→https://medibrick.com/jobs/intensivist-bengaluru-5e561d2d intent=true",
+      "pass": true,
+      "events": [],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Browse Jobs",
+      "case": "Case 1",
+      "viewport": "mobile",
+      "expected": "Jobs listing loads",
+      "actual": "On /jobs",
+      "pass": true,
+      "events": [
+        "page_view"
+      ],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Open Job Detail",
+      "case": "Case 1",
+      "viewport": "mobile",
+      "expected": "Job detail at /jobs/intensivist-bengaluru-5e561d2d + job_viewed event",
+      "actual": "https://medibrick.com/jobs/intensivist-bengaluru-5e561d2d | job_viewed=true",
+      "pass": true,
+      "events": [
+        "page_view",
+        "job_viewed",
+        "job_viewed"
+      ],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Click Apply → Auth",
+      "case": "Case 1",
+      "viewport": "mobile",
+      "expected": "Redirect to /auth; job slug/id + return URL persisted",
+      "actual": "url=https://medibrick.com/auth redirect=/jobs/intensivist-bengaluru-5e561d2d jobId=5e561d2d-690e-49f0-b48f-68c522fead00",
+      "pass": true,
+      "events": [
+        "page_view",
+        "job_viewed",
+        "job_viewed",
+        "apply_clicked",
+        "apply_requires_auth",
+        "page_view"
+      ],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Auth shows job context card",
+      "case": "Case 1",
+      "viewport": "mobile",
+      "expected": "\"Continue your application\" + job title visible",
+      "actual": "Shows \"intensivist\"",
+      "pass": true,
+      "events": [],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Login with Google",
+      "case": "Case 1",
+      "viewport": "mobile",
+      "expected": "OAuth → return to same job with ?apply=resume",
+      "actual": "NOT AUTOMATED — requires manual Google OAuth in browser",
+      "pass": false,
+      "events": [],
+      "ux": [],
+      "risks": [
+        "Google OAuth path unverified in this run — highest-traffic auth method"
+      ],
+      "severity": "P0"
+    },
+    {
+      "step": "Browser back after Apply→Auth",
+      "case": "Back button",
+      "viewport": "mobile",
+      "expected": "Back returns to job detail; intent still persisted",
+      "actual": "back→https://medibrick.com/jobs/intensivist-bengaluru-5e561d2d intent=true",
+      "pass": true,
+      "events": [],
+      "ux": [],
+      "risks": []
+    },
+    {
+      "step": "Email signup after Apply",
+      "case": "Case 1 (email path)",
+      "viewport": "desktop",
+      "expected": "Session created → complete-profile OR return to job",
+      "actual": "https://medibrick.com/auth",
+      "pass": false,
+      "events": [
+        "page_view",
+        "auth_started",
+        "auth_started_from_job"
+      ],
+      "ux": [],
+      "risks": [
+        "Signup may require email confirmation — blocks apply funnel"
+      ],
+      "severity": "P1"
+    },
+    {
+      "step": "Return to same job after onboarding",
+      "case": "Case 1 (email path)",
+      "viewport": "desktop",
+      "expected": "Land on /jobs/intensivist-bengaluru-5e561d2d with apply=resume",
+      "actual": "https://medibrick.com/auth",
+      "pass": false,
+      "events": [
+        "page_view",
+        "auth_started",
+        "auth_started_from_job"
+      ],
+      "ux": [],
+      "risks": [
+        "User must manually find the job again"
+      ],
+      "severity": "P0"
+    },
+    {
+      "step": "Case 2 existing user login",
+      "case": "Case 2",
+      "viewport": "all",
+      "expected": "Login with test professional account",
+      "actual": "Could not sign in — set E2E_PRO_EMAIL / E2E_PRO_PASSWORD",
+      "pass": false,
+      "events": [],
+      "ux": [],
+      "risks": [
+        "Existing-user path not validated"
+      ],
+      "severity": "P1"
+    }
+  ],
+  "bugs": [
+    {
+      "step": "Login with Google",
+      "case": "Case 1",
+      "severity": "P0",
+      "actual": "NOT AUTOMATED — requires manual Google OAuth in browser",
+      "risks": [
+        "Google OAuth path unverified in this run — highest-traffic auth method"
+      ]
+    },
+    {
+      "step": "Login with Google",
+      "case": "Case 1",
+      "severity": "P0",
+      "actual": "NOT AUTOMATED — requires manual Google OAuth in browser",
+      "risks": [
+        "Google OAuth path unverified in this run — highest-traffic auth method"
+      ]
+    },
+    {
+      "step": "Email signup after Apply",
+      "case": "Case 1 (email path)",
+      "severity": "P1",
+      "actual": "https://medibrick.com/auth",
+      "risks": [
+        "Signup may require email confirmation — blocks apply funnel"
+      ]
+    },
+    {
+      "step": "Return to same job after onboarding",
+      "case": "Case 1 (email path)",
+      "severity": "P0",
+      "actual": "https://medibrick.com/auth",
+      "risks": [
+        "User must manually find the job again"
+      ]
+    },
+    {
+      "step": "Case 2 existing user login",
+      "case": "Case 2",
+      "severity": "P1",
+      "actual": "Could not sign in — set E2E_PRO_EMAIL / E2E_PRO_PASSWORD",
+      "risks": [
+        "Existing-user path not validated"
+      ]
+    }
+  ],
+  "screenshotsDir": "docs/apply-flow-review/screenshots"
+}

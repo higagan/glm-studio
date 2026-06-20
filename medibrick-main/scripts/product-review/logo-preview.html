@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>MediBrick Logo — 3 directions</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--brand:hsl(14 74% 53%);--deep:hsl(13 64% 43%);--lift:hsl(15 82% 62%);--ink:hsl(24 10% 10%);--paper:hsl(40 33% 98%)}
+  body{margin:0;padding:40px;font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--paper);color:var(--ink)}
+  h1{font-size:22px;margin:0 0 8px}
+  p{color:hsl(28 7% 42%);margin:0 0 32px;max-width:640px;line-height:1.5}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:960px}
+  .card{background:#fff;border:1px solid hsl(36 22% 90%);border-radius:16px;padding:28px 24px 22px}
+  .card h2{margin:0 0 6px;font-size:17px}
+  .card small{display:block;color:hsl(28 7% 42%);font-size:13px;line-height:1.45;margin-bottom:20px;min-height:58px}
+  .icons{display:flex;align-items:flex-end;gap:18px;margin-bottom:22px;min-height:96px}
+  .icons span{font-size:11px;color:hsl(28 7% 42%);text-align:center}
+  .lockup{display:flex;align-items:center;gap:10px;font-size:26px;letter-spacing:-.55px;padding-top:16px;border-top:1px solid hsl(36 22% 90%)}
+  .lockup .m{font-weight:600}.lockup .b{font-weight:800;color:var(--brand)}
+  .dark{background:hsl(30 8% 8%);border-radius:12px;padding:14px 16px;margin-top:12px}
+  .dark .lockup{color:#fff}
+</style>
+</head>
+<body>
+<h1>Pick a direction</h1>
+<p>Three distinct marks — no brick walls, no medical clichés. Each is built to read at favicon size and stick in memory.</p>
+<div class="grid" id="grid"></div>
+<script>
+const B=getComputedStyle(document.documentElement).getPropertyValue('--brand').trim();
+const D=getComputedStyle(document.documentElement).getPropertyValue('--deep').trim();
+const L=getComputedStyle(document.documentElement).getPropertyValue('--lift').trim();
+
+function bridge(px){
+  const s=px/44;
+  return `<svg width="${px}" height="${px}" viewBox="0 0 44 44"><defs><linearGradient id="g${px}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${L}"/><stop offset="100%" stop-color="${D}"/></linearGradient></defs><g fill="url(#g${px})"><rect x="5" y="7" width="12" height="30" rx="3.2"/><rect x="27" y="7" width="12" height="30" rx="3.2"/></g><g transform="translate(22 22) rotate(-38) translate(-5.5 -4)"><rect x="0" y="0" width="11" height="8" rx="2.2" fill="#fff"/></g><g stroke="#fff" stroke-opacity=".22" stroke-width="1.2" stroke-linecap="round"><line x1="8" y1="16" x2="14" y2="16"/><line x1="8" y1="24" x2="14" y2="24"/><line x1="30" y1="16" x2="36" y2="16"/><line x1="30" y1="24" x2="36" y2="24"/></g></svg>`;
+}
+
+function monogram(px){
+  const id='m'+px;
+  return `<svg width="${px}" height="${px}" viewBox="0 0 44 44"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${L}"/><stop offset="100%" stop-color="${D}"/></linearGradient></defs><rect x="0" y="0" width="44" height="44" rx="11" fill="url(#${id})"/><path fill="#fff" d="M10 34V10h5.2l7.2 13.2L29.6 10H35v24h-5.4V18.8L23.2 32h-2.4L14.4 18.8V34H10z"/></svg>`;
+}
+
+function isometric(px){
+  const id='i'+px;
+  return `<svg width="${px}" height="${px}" viewBox="0 0 44 44"><defs><linearGradient id="${id}a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${L}"/><stop offset="100%" stop-color="${B}"/></linearGradient></defs><path fill="${D}" d="M8 28 L22 36 L22 20 L8 12 Z"/><path fill="url(#${id}a)" d="M22 20 L36 12 L36 28 L22 36 Z"/><path fill="${L}" d="M8 12 L22 4 L36 12 L22 20 Z"/><path stroke="#fff" stroke-opacity=".35" stroke-width="1.2" d="M8 12 L22 4 L36 12"/><line x1="22" y1="20" x2="22" y2="36" stroke="#fff" stroke-opacity=".15" stroke-width="1"/></svg>`;
+}
+
+const concepts=[
+  {name:'A — The Bridge',desc:'Two pillars + connector brick. Hospital ↔ professional. Staffing as the link.',fn:bridge},
+  {name:'B — Bold M',desc:'Chunky monogram on terracotta tile. Typographic, app-icon clean, instant "Medi".',fn:monogram},
+  {name:'C — Isometric Brick',desc:'One tangible 3D brick. Premium, physical, unmistakably "brick".',fn:isometric},
+];
+
+document.getElementById('grid').innerHTML=concepts.map(c=>`
+  <div class="card">
+    <h2>${c.name}</h2>
+    <small>${c.desc}</small>
+    <div class="icons">
+      ${[24,36,64].map(n=>`<div><div>${c.fn(n)}</div><span>${n}px</span></div>`).join('')}
+    </div>
+    <div class="lockup">${c.fn(36)}<span><span class="m">Medi</span><span class="b">Brick</span></span></div>
+    <div class="dark"><div class="lockup">${c.fn(36)}<span><span class="m">Medi</span><span class="b">Brick</span></span></div></div>
+  </div>`).join('');
+</script>
+</body>
+</html>

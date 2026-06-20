@@ -1,0 +1,36 @@
+{
+  "website": {
+    "status": "UP",
+    "lastCheck": "2026-05-22T16:25:00+05:30",
+    "uptimePercent": 100.0,
+    "avgResponseMs": 234,
+    "sslExpiry": "2026-08-15"
+  },
+  "competitor": {
+    "jobizo": {
+      "status": "UP",
+      "lastCheck": "2026-05-22T16:25:00+05:30",
+      "shiftsFulfilled": "10M+",
+      "hospitals": "150+",
+      "professionals": "60K+"
+    }
+  },
+  "content": {
+    "blogPostsThisMonth": 0,
+    "linkedinPostsThisMonth": 0,
+    "newslettersSent": 0,
+    "lastBlogDate": null,
+    "lastLinkedInDate": null
+  },
+  "leads": {
+    "totalContacts": 5,
+    "outreachSent": 0,
+    "responses": 0,
+    "meetings": 0
+  },
+  "industry": {
+    "majorFundingsThisWeek": 5,
+    "targetCities": ["Bengaluru", "Hyderabad", "Chennai", "Mumbai", "Delhi", "Pune"],
+    "hotTopics": ["Hospital IPOs", "PE investments", "Expansion plans"]
+  }
+}

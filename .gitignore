@@ -1,0 +1,54 @@
+# Secrets
+.env*
+*.pem
+*.key
+
+# Plausible analytics (contains tokens)
+plausible/
+
+# Node modules
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+**/\__pycache__/
+
+# DB files
+*.sqlite
+*.sqlite-*
+*.sst
+*.blob
+**/*.log
+**/LOG
+**/LOG.*
+**/MANIFEST-*
+**/OPTIONS-*
+**/CURRENT
+**/IDENTITY
+**/LOCK
+
+# Embedded repo backups
+*.git.bak/
+
+# OpenClaw state
+.openclaw/
+
+# Logs
+logs/
+
+# Embedded repos (managed separately)
+glm-ui/.git/
+medibrick-main/.git/
+
+# Data dirs
+open-notebook-external-ollama/
+surreal_data/
+notebook_data/
+
+# Sub-project build artifacts
+**/node_modules/
+**/dist/
+**/.vercel/
+**/.output/
+**/bun.lockb

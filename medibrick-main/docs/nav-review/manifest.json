@@ -1,0 +1,60 @@
+{
+  "capturedAt": "2026-06-16T19:31:37.164Z",
+  "base": "http://localhost:8081",
+  "shots": [
+    {
+      "id": "01-logged-out",
+      "path": "/",
+      "name": "Logged out",
+      "variant": "desktop",
+      "url": "http://localhost:8081/",
+      "file": "/Users/gagandeep/.openclaw/workspace/medibrick-main/docs/nav-review/screenshots/desktop/01-logged-out.png",
+      "ok": true
+    },
+    {
+      "id": "01-logged-out",
+      "path": "/",
+      "name": "Logged out",
+      "variant": "mobile",
+      "url": "http://localhost:8081/",
+      "file": "/Users/gagandeep/.openclaw/workspace/medibrick-main/docs/nav-review/screenshots/mobile/01-logged-out.png",
+      "ok": true
+    },
+    {
+      "id": "02-professional",
+      "path": "/dev/navigation-review?view=professional",
+      "name": "Professional",
+      "variant": "desktop",
+      "url": "http://localhost:8081/dev/navigation-review?view=professional",
+      "file": "/Users/gagandeep/.openclaw/workspace/medibrick-main/docs/nav-review/screenshots/desktop/02-professional.png",
+      "ok": true
+    },
+    {
+      "id": "02-professional",
+      "path": "/dev/navigation-review?view=professional",
+      "name": "Professional",
+      "variant": "mobile",
+      "url": "http://localhost:8081/dev/navigation-review?view=professional",
+      "file": "/Users/gagandeep/.openclaw/workspace/medibrick-main/docs/nav-review/screenshots/mobile/02-professional.png",
+      "ok": true
+    },
+    {
+      "id": "03-hospital",
+      "path": "/dev/navigation-review?view=hospital",
+      "name": "Hospital",
+      "variant": "desktop",
+      "url": "http://localhost:8081/dev/navigation-review?view=hospital",
+      "file": "/Users/gagandeep/.openclaw/workspace/medibrick-main/docs/nav-review/screenshots/desktop/03-hospital.png",
+      "ok": true
+    },
+    {
+      "id": "03-hospital",
+      "path": "/dev/navigation-review?view=hospital",
+      "name": "Hospital",
+      "variant": "mobile",
+      "url": "http://localhost:8081/dev/navigation-review?view=hospital",
+      "file": "/Users/gagandeep/.openclaw/workspace/medibrick-main/docs/nav-review/screenshots/mobile/03-hospital.png",
+      "ok": true
+    }
+  ]
+}

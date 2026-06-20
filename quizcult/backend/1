@@ -1,0 +1,342 @@
+INFO:     Started server process [10937]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2127, in _exec_insertmany_context
+    dialect.do_execute(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 183, in execute
+    self._adapt_connection._handle_exception(error)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 343, in _handle_exception
+    raise error
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 165, in execute
+    self.await_(_cursor.execute(operation, parameters))
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/core.py", line 63, in _connection_worker_thread
+    result = function()
+             ^^^^^^^^^^
+sqlite3.IntegrityError: UNIQUE constraint failed: challenges.slug
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/uvicorn/protocols/http/h11_impl.py", line 415, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/api/cron.py", line 24, in run_trending_news
+    created = await run_news_pipeline(db, max_quizzes=5)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/services/trending_news.py", line 263, in run_trending_pipeline
+    await db_session.commit()
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/session.py", line 999, in commit
+    await greenlet_spawn(self.sync_session.commit)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 203, in greenlet_spawn
+    result = context.switch(value)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2034, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1315, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1290, in _prepare_impl
+    self.session.flush()
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4352, in flush
+    self._flush(objects)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4487, in _flush
+    with util.safe_reraise():
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4448, in _flush
+    flush_context.execute()
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 465, in execute
+    rec.execute(self)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 641, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 94, in save_obj
+    _emit_insert_statements(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 1144, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2135, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2127, in _exec_insertmany_context
+    dialect.do_execute(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 183, in execute
+    self._adapt_connection._handle_exception(error)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 343, in _handle_exception
+    raise error
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 165, in execute
+    self.await_(_cursor.execute(operation, parameters))
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/core.py", line 63, in _connection_worker_thread
+    result = function()
+             ^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: challenges.slug
+[SQL: INSERT INTO challenges (id, title, slug, description, category, subcategory, source_type, difficulty, thumbnail_url, is_active, is_featured, play_count, share_count, avg_score, challenge_count, expires_at, generated_by, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING created_at, updated_at, id]
+[parameters: ('4af0c297-10b8-418f-ae60-f9761078a0ba', 'AI agent bankrupted their operator while trying to scan DN42', 'ai-agent-bankrupted-their-operator-while-trying-to-scan-dn42', 'Trending: AI agent bankrupted their operator while trying to scan DN42', 'tech', None, 'trending', 'medium', None, 1, 0, 0, 0, 0, 0, '2026-06-15 17:39:42.096164', 'system', '["technology"]', '01e77304-0f37-4c2d-9945-561917ac6bc9', "A Call to Action: Stop the FCC's KYC Regime", 'a-call-to-action-stop-the-fccs-kyc-regime', "Trending: A Call to Action: Stop the FCC's KYC Regime", 'tech', None, 'trending', 'medium', None, 1, 0, 0, 0, 0, 0, '2026-06-15 17:39:42.097396', 'system', '["technology"]', 'f60d0ac4-198c-4eae-a103-708cab12a011', 'CRISPR tech selectively shreds cancer cells, including "undruggable" cancers', 'crispr-tech-selectively-shreds-cancer-cells-including-undruggable-cancers', 'Trending: CRISPR tech selectively shreds cancer cells, including "undruggable" cancers', 'tech', None, 'trending', 'medium', None, 1, 0, 0, 0, 0, 0, '2026-06-15 17:39:42.098262', 'system', '["technology"]', '498d2f15-413a-4d77-8251-f07bea0db4d8', "A dumpster arrived behind my university's library", 'a-dumpster-arrived-behind-my-universitys-library', "Trending: A dumpster arrived behind my university's library", 'tech', None, 'trending', 'medium', None, 1, 0, 0, 0, 0, 0, '2026-06-15 17:39:42.099118', 'system', '["technology"]')]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2127, in _exec_insertmany_context
+    dialect.do_execute(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 183, in execute
+    self._adapt_connection._handle_exception(error)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 343, in _handle_exception
+    raise error
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 165, in execute
+    self.await_(_cursor.execute(operation, parameters))
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/core.py", line 63, in _connection_worker_thread
+    result = function()
+             ^^^^^^^^^^
+sqlite3.IntegrityError: UNIQUE constraint failed: challenges.slug
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/uvicorn/protocols/http/h11_impl.py", line 415, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 62, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/applications.py", line 1159, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/fastapi/routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/api/cron.py", line 24, in run_trending_news
+    created = await run_news_pipeline(db, max_quizzes=5)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/services/trending_news.py", line 263, in run_trending_pipeline
+    await db_session.commit()
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/session.py", line 999, in commit
+    await greenlet_spawn(self.sync_session.commit)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 203, in greenlet_spawn
+    result = context.switch(value)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2034, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1315, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1290, in _prepare_impl
+    self.session.flush()
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4352, in flush
+    self._flush(objects)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4487, in _flush
+    with util.safe_reraise():
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4448, in _flush
+    flush_context.execute()
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 465, in execute
+    rec.execute(self)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 641, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 94, in save_obj
+    _emit_insert_statements(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 1144, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2135, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2127, in _exec_insertmany_context
+    dialect.do_execute(
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 183, in execute
+    self._adapt_connection._handle_exception(error)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 343, in _handle_exception
+    raise error
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/dialects/sqlite/aiosqlite.py", line 165, in execute
+    self.await_(_cursor.execute(operation, parameters))
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 132, in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 196, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/cursor.py", line 40, in execute
+    await self._execute(self._cursor.execute, sql, parameters)
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/cursor.py", line 32, in _execute
+    return await self._conn._execute(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/core.py", line 160, in _execute
+    return await future
+           ^^^^^^^^^^^^
+  File "/Users/gagandeep/.openclaw/workspace/quizcult/backend/venv/lib/python3.11/site-packages/aiosqlite/core.py", line 63, in _connection_worker_thread
+    result = function()
+             ^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: challenges.slug
+[SQL: INSERT INTO challenges (id, title, slug, description, category, subcategory, source_type, difficulty, thumbnail_url, is_active, is_featured, play_count, share_count, avg_score, challenge_count, expires_at, generated_by, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING created_at, updated_at, id]
+[parameters: ('5b0e8f15-e0da-41bc-b38d-ddeb27ea595d', 'AI agent bankrupted their operator while trying to scan DN42', 'ai-agent-bankrupted-their-operator-while-trying-to-scan-dn42', 'Trending: AI agent bankrupted their operator while trying to scan DN42', 'tech', None, 'trending', 'medium', None, 1, 0, 0, 0, 0, 0, '2026-06-15 17:40:27.450301', 'system', '["technology"]', '9fa00f88-dafb-4df3-8aa0-f4c941812335', "A Call to Action: Stop the FCC's KYC Regime", 'a-call-to-action-stop-the-fccs-kyc-regime', "Trending: A Call to Action: Stop the FCC's KYC Regime", 'tech', None, 'trending', 'medium', None, 1, 0, 0, 0, 0, 0, '2026-06-15 17:40:27.451544', 'system', '["technology"]', '08026629-baaa-4321-9ffb-74872034c9a7', 'CRISPR tech selectively shreds cancer cells, including "undruggable" cancers', 'crispr-tech-selectively-shreds-cancer-cells-including-undruggable-cancers', 'Trending: CRISPR tech selectively shreds cancer cells, including "undruggable" cancers', 'tech', None, 'trending', 'medium', None, 1, 0, 0, 0, 0, 0, '2026-06-15 17:40:27.452529', 'system', '["technology"]', '07d11999-cd10-4296-8080-7399c086201c', "A dumpster arrived behind my university's library", 'a-dumpster-arrived-behind-my-universitys-library', "Trending: A dumpster arrived behind my university's library", 'tech', None, 'trending', 'medium', None, 1, 0, 0, 0, 0, 0, '2026-06-15 17:40:27.453280', 'system', '["technology"]')]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10937]

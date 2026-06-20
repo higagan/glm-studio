@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Auto Apply</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        .container { max-width: 960px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #2a2a2a;
+            margin-bottom: 28px;
+        }
+        .header h1 {
+            font-size: 30px;
+            background: linear-gradient(90deg, #00ff88, #00a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p { color: #888; font-size: 14px; }
+        .notice {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        .notice.warn { border-color: #ffaa00; color: #ffcc66; }
+        .main-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, #00ff88, #00a8ff);
+            color: #000;
+            transition: filter 0.2s, transform 0.1s;
+            margin-bottom: 24px;
+        }
+        .main-btn:hover:not(:disabled) { filter: brightness(1.1); }
+        .main-btn:active:not(:disabled) { transform: scale(0.99); }
+        .main-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .timer-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .timer-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+        .timer-card .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #00ff88;
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-card .label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+        .section-title {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .jobs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .job-item {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .job-item.pending { border-color: #333; }
+        .job-item.working { border-color: #00a8ff; background: #122030; }
+        .job-item.applied { border-color: #00ff88; }
+        .job-item.skipped { border-color: #666; opacity: 0.7; }
+        .job-item.failed { border-color: #ff4444; }
+        .job-status {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+            background: #2a2a2a;
+        }
+        .job-item.working .job-status { background: #00a8ff; color: #000; }
+        .job-item.applied .job-status { background: #00ff88; color: #000; }
+        .job-item.skipped .job-status { background: #666; color: #fff; }
+        .job-item.failed .job-status { background: #ff4444; color: #fff; }
+        .job-info { flex: 1; min-width: 0; }
+        .job-title {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .job-meta {
+            font-size: 12px;
+            color: #888;
+            margin-top: 3px;
+        }
+        .job-time {
+            font-size: 12px;
+            color: #aaa;
+            font-variant-numeric: tabular-nums;
+            min-width: 60px;
+            text-align: right;
+        }
+        .logs {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 14px 16px;
+            max-height: 260px;
+            overflow-y: auto;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .log-line { color: #aaa; }
+        .log-line.info { color: #ccc; }
+        .log-line.success { color: #00ff88; }
+        .log-line.error { color: #ff4444; }
+        .log-line.warn { color: #ffcc66; }
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>LinkedIn Auto Apply</h1>
+            <p>Apply to LinkedIn jobs. Track progress & timing live.</p>
+        </div>
+
+        <div id="notice" class="notice">Checking Chrome debug port...</div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+            <button id="startBtn" class="main-btn" disabled style="margin-bottom:0">Apply to LinkedIn Feed Jobs</button>
+            <button id="specificBtn" class="main-btn" disabled style="margin-bottom:0; background: linear-gradient(135deg, #a855f7, #6366f1);">Apply to 20 Specific Jobs</button>
+        </div>
+
+        <div class="timer-row">
+            <div class="timer-card">
+                <div id="elapsedTotal" class="value">00:00</div>
+                <div class="label">Total Time</div>
+            </div>
+            <div class="timer-card">
+                <div id="completedCount" class="value">0/0</div>
+                <div class="label">Completed</div>
+            </div>
+            <div class="timer-card">
+                <div id="appliedCount" class="value">0</div>
+                <div class="label">Applied</div>
+            </div>
+        </div>
+
+        <div class="section-title">Jobs Queue</div>
+        <div id="jobsList" class="jobs-list">
+            <div class="empty-state">Click start to load jobs from LinkedIn.</div>
+        </div>
+
+        <div class="section-title">Live Log</div>
+        <div id="logs" class="logs"></div>
+    </div>
+
+    <script>
+        const state = {
+            running: false,
+            jobs: [],
+            logs: [],
+            startedAt: null,
+            elapsedInterval: null,
+            chromeReady: false
+        };
+
+        const els = {
+            notice: document.getElementById('notice'),
+            startBtn: document.getElementById('startBtn'),
+            specificBtn: document.getElementById('specificBtn'),
+            elapsedTotal: document.getElementById('elapsedTotal'),
+            completedCount: document.getElementById('completedCount'),
+            appliedCount: document.getElementById('appliedCount'),
+            jobsList: document.getElementById('jobsList'),
+            logs: document.getElementById('logs')
+        };
+
+        function formatTime(ms) {
+            if (!ms || ms < 0) ms = 0;
+            const totalSeconds = Math.floor(ms / 1000);
+            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function addLog(message, type = 'info') {
+            state.logs.push({ time: new Date().toLocaleTimeString('en-IN'), message, type });
+            const line = document.createElement('div');
+            line.className = `log-line ${type}`;
+            line.textContent = `[${state.logs.at(-1).time}] ${message}`;
+            els.logs.appendChild(line);
+            els.logs.scrollTop = els.logs.scrollHeight;
+        }
+
+        async function checkChrome() {
+            try {
+                const r = await fetch('/api/chrome-status');
+                const data = await r.json();
+                state.chromeReady = data.ready;
+                if (data.ready) {
+                    els.notice.className = 'notice';
+                    els.notice.textContent = `Chrome debug port ready (${data.pages} page(s) found).`;
+                    els.startBtn.disabled = false;
+                    els.specificBtn.disabled = false;
+                } else {
+                    els.notice.className = 'notice warn';
+                    els.notice.textContent = '⚠️ Chrome is not running on port 9222. Launch it first: /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9222 --user-data-dir=$HOME/.openclaw/chrome-debug-profile';
+                    els.startBtn.disabled = true;
+                    els.specificBtn.disabled = true;
+                }
+            } catch (e) {
+                state.chromeReady = false;
+                els.notice.className = 'notice warn';
+                els.notice.textContent = '⚠️ Dashboard server not responding. Restart the server.';
+                els.startBtn.disabled = true;
+            }
+        }
+
+        function renderJobs() {
+            if (!state.jobs.length) {
+                els.jobsList.innerHTML = '<div class="empty-state">Click start to load jobs from LinkedIn.</div>';
+                return;
+            }
+            els.jobsList.innerHTML = '';
+            const completed = state.jobs.filter(j => j.status !== 'pending' && j.status !== 'working').length;
+            const applied = state.jobs.filter(j => j.status === 'applied').length;
+            els.completedCount.textContent = `${completed}/${state.jobs.length}`;
+            els.appliedCount.textContent = applied;
+
+            for (const job of state.jobs) {
+                const div = document.createElement('div');
+                div.className = `job-item ${job.status}`;
+                const icons = {
+                    pending: '○', working: '⏳', applied: '✓', skipped: '−', failed: '✕'
+                };
+                const elapsed = job.finishedAt && job.startedAt ? formatTime(job.finishedAt - job.startedAt) : '';
+                div.innerHTML = `
+                    <div class="job-status">${icons[job.status] || '○'}</div>
+                    <div class="job-info">
+                        <div class="job-title">${escapeHtml(job.title || 'Unknown Job')}</div>
+                        <div class="job-meta">${escapeHtml(job.company || '')} · ${job.status.toUpperCase()}</div>
+                    </div>
+                    <div class="job-time">${elapsed}</div>
+                `;
+                els.jobsList.appendChild(div);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function startElapsedTimer() {
+            state.startedAt = Date.now();
+            if (state.elapsedInterval) clearInterval(state.elapsedInterval);
+            state.elapsedInterval = setInterval(() => {
+                els.elapsedTotal.textContent = formatTime(Date.now() - state.startedAt);
+            }, 1000);
+        }
+
+        function stopElapsedTimer() {
+            if (state.elapsedInterval) {
+                clearInterval(state.elapsedInterval);
+                state.elapsedInterval = null;
+            }
+            if (state.startedAt) {
+                els.elapsedTotal.textContent = formatTime(Date.now() - state.startedAt);
+            }
+        }
+
+        async function pollStatus(btn, label) {
+            if (!state.running) return;
+            try {
+                const r = await fetch('/api/status');
+                const data = await r.json();
+                state.jobs = data.jobs || state.jobs;
+                renderJobs();
+                if (data.logs && data.logs.length > state.logs.length) {
+                    for (let i = state.logs.length; i < data.logs.length; i++) {
+                        addLog(data.logs[i].message, data.logs[i].type);
+                    }
+                }
+                if (data.running) {
+                    requestAnimationFrame(() => setTimeout(() => pollStatus(btn, label), 1500));
+                } else {
+                    state.running = false;
+                    stopElapsedTimer();
+                    resetButtons();
+                    addLog(`${label} complete.`, 'success');
+                    renderJobs();
+                }
+            } catch (e) {
+                addLog('Status poll failed: ' + e.message, 'error');
+                state.running = false;
+                stopElapsedTimer();
+                resetButtons();
+            }
+        }
+
+        async function startRun(endpoint, btn, label) {
+            if (state.running) return;
+            state.running = true;
+            els.startBtn.disabled = true;
+            els.specificBtn.disabled = true;
+            btn.textContent = 'Applying...';
+            state.logs = [];
+            els.logs.innerHTML = '';
+            addLog(`Starting ${label}...`, 'info');
+            startElapsedTimer();
+            renderJobs();
+            try {
+                await fetch(endpoint, { method: 'POST' });
+                pollStatus(btn, label);
+            } catch (e) {
+                addLog('Failed to start: ' + e.message, 'error');
+                state.running = false;
+                stopElapsedTimer();
+                resetButtons();
+            }
+        }
+
+        function resetButtons() {
+            els.startBtn.disabled = !state.chromeReady;
+            els.specificBtn.disabled = !state.chromeReady;
+            els.startBtn.textContent = 'Apply to LinkedIn Feed Jobs';
+            els.specificBtn.textContent = 'Apply to 20 Specific Jobs';
+        }
+
+        els.startBtn.addEventListener('click', () => startRun('/api/run/linkedin', els.startBtn, 'LinkedIn feed jobs'));
+        els.specificBtn.addEventListener('click', () => startRun('/api/run/linkedin-specific', els.specificBtn, '20 specific LinkedIn jobs'));
+
+        checkChrome();
+        setInterval(checkChrome, 10000);
+    </script>
+</body>
+</html>

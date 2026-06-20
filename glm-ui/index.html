@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLM-5.2 Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;550;600&family=JetBrains+Mono:wght@400;450;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf9f7;
+            --bg-elevated: #ffffff;
+            --bg-sidebar: #f5f4f2;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-tertiary: #9e9e9e;
+            --border: #e8e6e3;
+            --border-light: #f0eeeb;
+            --accent: #dc4a3d;
+            --accent-soft: #fef3f2;
+            --code-bg: #f7f6f5;
+            --code-border: #ebe9e6;
+            --success: #2d8a4e;
+            --warning: #c4850e;
+        }
+        [data-theme="dark"] {
+            --bg: #0d0d0d;
+            --bg-elevated: #1a1a1a;
+            --bg-sidebar: #141414;
+            --text-primary: #e8e6e3;
+            --text-secondary: #a8a5a0;
+            --text-tertiary: #6b6864;
+            --border: #2a2a2a;
+            --border-light: #222222;
+            --accent: #e85d50;
+            --accent-soft: #2a1a1a;
+            --code-bg: #1a1a1a;
+            --code-border: #2a2a2a;
+            --success: #3da868;
+            --warning: #d4a017;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            z-index: 100;
+            transition: all 0.25s ease;
+        }
+        .theme-toggle:hover { background: var(--accent-soft); }
+        [data-theme="dark"] .table-wrap { background: #141414; }
+        [data-theme="dark"] th { background: #1f1f1f; }
+        [data-theme="dark"] td { border-bottom-color: #2a2a2a; }
+        [data-theme="dark"] tr:hover td { background: #1a1a1a; }
+        [data-theme="dark"] .code-block { background: #141414; border-color: #2a2a2a; }
+        [data-theme="dark"] .code-header { background: #1a1a1a; border-bottom-color: #2a2a2a; }
+        [data-theme="dark"] pre { background: #141414 !important; }
+        [data-theme="dark"] .input-wrap { background: var(--bg-elevated); }
+        [data-theme="dark"] .input-field { color: var(--text-primary); }
+        [data-theme="dark"] .welcome h1 { color: var(--text-primary); }
+        [data-theme="dark"] .suggestion { background: var(--bg-elevated); border-color: var(--border); }
+        [data-theme="dark"] .suggestion:hover { background: var(--bg-sidebar); border-color: var(--accent); }
+        [data-theme="dark"] .typing-dot { background: var(--text-tertiary); }
+        [data-theme="dark"] .message-role { color: var(--text-primary); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+        .app {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+        }
+        .sidebar {
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 16px;
+        }
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo-badge {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: 2px 8px;
+            border-radius: 12px;
+            letter-spacing: 0.3px;
+        }
+        .model-info {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .new-chat-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: all 0.25s ease;
+        }
+        .new-chat-btn:hover { background: #c43e32; }
+        .chat-history { flex: 1; overflow-y: auto; }
+        .history-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-item:hover { background: var(--bg-elevated); }
+        .main {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 48px;
+            scroll-behavior: smooth;
+        }
+        .welcome {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-top: 20vh;
+        }
+        .welcome h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+        .welcome p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+        .suggestion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .suggestion {
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: var(--bg-elevated);
+        }
+        .suggestion:hover {
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(220,74,61,0.08);
+        }
+        .suggestion-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+        .suggestion-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        .message {
+            max-width: 800px;
+            margin: 0 auto 24px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .avatar.user { background: var(--accent); }
+        .avatar.assistant { background: #2d8a4e; }
+        .message-role {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .message-time {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-left: auto;
+        }
+        .message-body {
+            padding-left: 32px;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+        .message-body h1, .message-body h2, .message-body h3 {
+            font-weight: 600;
+            margin: 20px 0 12px;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        .message-body h1 { font-size: 22px; }
+        .message-body h2 { font-size: 18px; }
+        .message-body h3 { font-size: 15px; }
+        .message-body p { margin: 8px 0; }
+        .message-body ul, .message-body ol {
+            margin: 8px 0;
+            padding-left: 24px;
+        }
+        .message-body li { margin: 4px 0; }
+        .message-body strong { font-weight: 600; color: var(--text-primary); }
+        .table-wrap {
+            overflow-x: auto;
+            margin: 12px 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-elevated);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th {
+            text-align: left;
+            padding: 10px 14px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: top;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--bg-sidebar); }
+        .code-block {
+            margin: 12px 0;
+            border: 1px solid var(--code-border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--code-bg);
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            background: var(--bg-sidebar);
+            border-bottom: 1px solid var(--code-border);
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+        }
+        .code-block pre {
+            padding: 14px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            background: var(--code-bg) !important;
+            color: var(--text-primary);
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            background: none;
+            padding: 0;
+        }
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            color: var(--text-secondary);
+            transition: all 0.25s ease;
+        }
+        .copy-btn:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .message-body code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--code-bg);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 13px;
+            border: 1px solid var(--code-border);
+        }
+        .input-area {
+            padding: 16px 48px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-elevated);
+        }
+        .input-wrap {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 48px 12px 16px;
+            transition: border-color 0.2s;
+        }
+        .input-wrap:focus-within { border-color: var(--accent); }
+        .input-field {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            resize: none; overflow: hidden;
+            max-height: 200px;
+            color: var(--text-primary);
+        }
+        .input-field::placeholder { color: var(--text-tertiary); }
+        .send-btn {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+        }
+        .send-btn:hover { background: #c43e32; }
+        .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .typing {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-tertiary);
+            animation: typingPulse 1.4s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingPulse {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 48px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            border-top: 1px solid var(--border);
+        }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+        @media (max-width: 768px) {
+            .app { grid-template-columns: 0 1fr; }
+            .sidebar { display: none; }
+            .messages { padding: 20px 16px; }
+            .input-area { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode">🌙</button>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">GLM Studio <span class="logo-badge">5.2 CLOUD</span></div>
+            <div class="model-info">glm-5.2:cloud via Ollama</div>
+            <button class="new-chat-btn" onclick="newChat()">+ New Chat</button>
+            <div class="chat-history" id="chatHistory"></div>
+        </aside>
+        <main class="main">
+            <div class="messages" id="messages">
+                <div class="welcome" id="welcome">
+                    <h1>GLM-5.2 Studio</h1>
+                    <p>A clean interface for the GLM-5.2 model</p>
+                    <div class="suggestion-grid">
+                        <div class="suggestion" onclick="setPrompt('Explain complex topics with detailed tables comparing alternatives')">
+                            <div class="suggestion-title">📊 Complex Analysis</div>
+                            <div class="suggestion-desc">Detailed tables with multi-column comparisons</div>
+                        </div>
+                        <div class="suggestion" onclick="setPrompt('Generate a Python script with clean code structure and comments')">
+                            <div class="suggestion-title">💻 Code Generation</div>
+                            <div class="suggestion-desc">Syntax-highlighted blocks with explanations</div>
+                        </div>
+                        <div class="suggestion" onclick="setPrompt('Create a structured breakdown of a project with phases and timelines')">
+                            <div class="suggestion-title">📋 Structured Planning</div>
+                            <div class="suggestion-desc">Phased breakdowns with collapsible sections</div>
+                        </div>
+                        <div class="suggestion" onclick="setPrompt('Analyze data trends and present findings in formatted tables')">
+                            <div class="suggestion-title">📈 Data Analysis</div>
+                            <div class="suggestion-desc">Rich tables with trend analysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-area">
+                <div class="input-wrap">
+                    <textarea class="input-field" id="inputField" placeholder="Message GLM-5.2..." rows="1"
+                        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="status-bar">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Checking Ollama...</span>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        const OLLAMA_HOST = '';
+        let currentChat = []; // loaded from localStorage if available
+        let isStreaming = false;
+
+        const SYSTEM_PROMPT = `You are GLM-5.2, a helpful coding partner. You MUST format all responses with excellent visual hierarchy using markdown:
+
+**STRUCTURE RULES:**
+- Use # for main titles, ## for sections, ### for subsections
+- Use **bold** for key terms and labels, NEVER for entire paragraphs
+- Use bullet lists (-) for grouped items, numbered lists (1.) only for sequences/steps
+- Separate sections with blank lines (\n\n)
+- For multi-item outputs (ideas, features, comparisons), use:
+  ## Title
+  **Label:** value  (NOT "1. Label: value")
+  **Label:** value
+- For tables, use proper markdown tables with | columns |
+- For code, use fenced blocks with language tags (\`\`\`python)
+- NEVER output flat numbered lists like "1. Label: text" — always use headings + bold labels
+
+**VISUAL RULES:**
+- One blank line between sections
+- Keep paragraphs short (2-4 sentences max)
+- Use tables for structured data, not long text lists
+- Use code blocks for any technical implementation details`;
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('glm-theme', next);
+            document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
+        }
+        function loadTheme() {
+            const saved = localStorage.getItem('glm-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+        function extractFinalAnswer(thinking) {
+            if (!thinking) return '';
+            const patterns = [
+                /(?:Output|Final Answer|Result|Response):\s*([\s\S]*)/i,
+                /(?:Format|Draft|Generate|Create).*?(```[\s\S]*?```|[\|].*[\|].*[\n])/,
+                /```[\s\S]*?```/,
+                /\|[\s\S]*?\|.*\n/,
+            ];
+            for (const p of patterns) {
+                const m = thinking.match(p);
+                if (m) return m[0] || m[1] || m[2] || '';
+            }
+            const lines = thinking.split('\n');
+            const cutoff = Math.floor(lines.length * 0.4);
+            return lines.slice(cutoff).join('\n');
+        }
+        function postProcessOutput(text) {
+            if (!text) return text;
+            let result = text;
+            result = result.replace(/^\d+\.\s*([A-Z][A-Za-z0-9\s\.\&]+)(?:\s*\([^)]+\))?\s*$/gm, (m, t) => `## ${t.trim()}`);
+            result = result.replace(/^\d+\.\s*([^:\n]+):\s*(.+)$/gm, (m, l, v) => `**${l.trim()}:** ${v.trim()}`);
+            result = result.replace(/^\d+\.\s*([^\n—-]+)[—-]\s*(.+)$/gm, (m, l, v) => `**${l.trim()}:** ${v.trim()}`);
+            result = result.replace(/(\*\*[^:]+:\*\* [^\n]+)\n(\*\*[^:]+:\*\*)/g, '$1\n\n$2');
+            return result;
+        }
+        function saveChat() {
+            localStorage.setItem('glm-chat-history', JSON.stringify(currentChat));
+        }
+        function loadChat() {
+            const saved = localStorage.getItem('glm-chat-history');
+            if (!saved) return;
+            try {
+                const msgs = JSON.parse(saved);
+                if (!msgs.length) return;
+                currentChat = msgs;
+                const welcome = document.getElementById('welcome'); if (welcome) welcome.style.display = 'none';
+                const container = document.getElementById('messages');
+                container.innerHTML = '';
+                for (const msg of msgs) {
+                    if (msg.role === 'user') {
+                        addMessage('user', msg.content);
+                    } else {
+                        addMessage('assistant', msg.content);
+                    }
+                }
+            } catch (e) {}
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            checkOllama();
+            loadTheme();
+            loadChat();
+        });
+
+        async function checkOllama() {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            try {
+                const res = await fetch(`${OLLAMA_HOST}/api/tags`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const hasGLM = data.models?.some(m => m.name === 'glm-5.2:cloud');
+                    dot.style.background = hasGLM ? 'var(--success)' : 'var(--warning)';
+                    text.textContent = hasGLM ? 'GLM-5.2 ready' : 'Ollama connected, GLM-5.2 not loaded';
+                } else throw new Error('Bad response');
+            } catch (e) {
+                dot.style.background = 'var(--accent)';
+                text.textContent = 'Ollama not running on port 11434';
+            }
+        }
+
+        function autoResize(t) {
+            t.style.height = 'auto';
+            t.style.height = Math.min(t.scrollHeight, 200) + 'px';
+        }
+
+        function handleKey(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function setPrompt(text) {
+            const input = document.getElementById('inputField');
+            input.value = text;
+            autoResize(input);
+            input.focus();
+        }
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        function renderMarkdown(text) {
+            if (!text) return '';
+            if (typeof marked === 'undefined') {
+                return escapeHtml(text).replace(/\n/g, '<br>');
+            }
+            try {
+                const r = marked.parse(text);
+                if (!r || !r.trim()) return escapeHtml(text).replace(/\n/g, '<br>');
+                return r;
+            } catch (e) {
+                return escapeHtml(text).replace(/\n/g, '<br>');
+            }
+        }
+
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 1500);
+            });
+        }
+
+        function addMessage(role, content, streaming = false) {
+            const container = document.getElementById('messages');
+            const id = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const div = document.createElement('div');
+            div.className = 'message';
+            div.id = id;
+            const now = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            div.innerHTML = `
+                <div class="message-header">
+                    <div class="avatar ${role}">${role === 'user' ? 'You' : 'GLM'}</div>
+                    <span class="message-role">${role === 'user' ? 'You' : 'GLM-5.2'}</span>
+                    <span class="message-time">${now}</span>
+                </div>
+                <div class="message-body" id="body-${id}">${streaming ? '<div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>' : renderMarkdown(content)}</div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function updateMessage(id, content) {
+            const body = document.getElementById(`body-${id}`);
+            if (body) {
+                body.innerHTML = renderMarkdown(content);
+                const container = document.getElementById('messages');
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        function finalizeMessage(id, content) {
+            const body = document.getElementById(`body-${id}`);
+            if (body) {
+                body.innerHTML = renderMarkdown(content);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('inputField');
+            const text = input.value.trim();
+            if (!text || isStreaming) return;
+            const welcome = document.getElementById('welcome'); if (welcome) welcome.style.display = 'none';
+            addMessage('user', text);
+            currentChat.push({ role: 'user', content: text });
+            input.value = '';
+            input.style.height = 'auto';
+            const msgId = addMessage('assistant', '', true);
+            isStreaming = true;
+            document.getElementById('sendBtn').disabled = true;
+            let fullContent = '';
+            let fullThinking = '';
+            let hasContent = false;
+            
+            try {
+                const useStream = true;
+                
+                if (useStream) {
+                    const res = await fetch(`${OLLAMA_HOST}/api/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: 'glm-5.2:cloud',
+                            messages: [{role: 'system', content: SYSTEM_PROMPT}, ...currentChat],
+                            stream: true
+                        })
+                    });
+                    
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                    }
+                    
+                    const reader = res.body.getReader();
+                    const decoder = new TextDecoder();
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n').filter(l => l.trim());
+                        
+                        for (const line of lines) {
+                            try {
+                                const data = JSON.parse(line);
+                                
+                                if (data.message?.content) {
+                                    fullContent += data.message.content;
+                                    hasContent = true;
+                                    updateMessage(msgId, fullContent);
+                                }
+                                
+                                if (data.message?.thinking) {
+                                    fullThinking += data.message.thinking;
+                                    if (!hasContent) {
+                                        updateMessage(msgId, fullThinking);
+                                    }
+                                }
+                                
+                                if (data.done) {
+                                    break;
+                                }
+                            } catch (e) {
+                                console.error('Parse error:', e, line);
+                            }
+                        }
+                    }
+                }
+                
+                const finalText = fullContent || fullThinking || 'No response received';
+                currentChat.push({ role: 'assistant', content: finalText });
+                
+                let finalHtml = '';
+                if (fullContent) {
+                    finalHtml = renderMarkdown(postProcessOutput(fullContent));
+                } else if (fullThinking && !fullContent) {
+                    const extracted = extractFinalAnswer(fullThinking);
+                    finalHtml = renderMarkdown(postProcessOutput(extracted || fullThinking));
+                }
+                
+                if (fullThinking && fullContent && !fullContent.includes(fullThinking.substring(0, 50))) {
+                    finalHtml += `<details style="margin-top:16px;border:1px solid var(--border);border-radius:8px;overflow:hidden"><summary style="padding:10px 16px;background:var(--bg-sidebar);cursor:pointer;font-size:13px;font-weight:500">🧠 Thinking process</summary><pre style="padding:12px 16px;opacity:0.6;font-size:12px;background:#f7f6f5;overflow-x:auto">${escapeHtml(fullThinking)}</pre></details>`;
+                }
+                
+                const body = document.getElementById(`body-${msgId}`);
+                if (body) {
+                    body.innerHTML = finalHtml || 'No response';
+                }
+                saveChat();
+                
+            } catch (e) {
+                console.error('Send error:', e);
+                updateMessage(msgId, `Error: ${e.message}`);
+            } finally {
+                isStreaming = false;
+                document.getElementById('sendBtn').disabled = false;
+            }
+        }
+
+        function newChat() {
+            currentChat = [];
+            localStorage.removeItem('glm-chat-history');
+            document.getElementById('messages').innerHTML = `
+                <div class="welcome" id="welcome">
+                    <h1>GLM-5.2 Studio</h1>
+                    <p>A clean interface for the GLM-5.2 model</p>
+                    <div class="suggestion-grid">
+                        <div class="suggestion" onclick="setPrompt('Explain complex topics with detailed tables comparing alternatives')">
+                            <div class="suggestion-title">📊 Complex Analysis</div>
+                            <div class="suggestion-desc">Detailed tables with multi-column comparisons</div>
+                        </div>
+                        <div class="suggestion" onclick="setPrompt('Generate a Python script with clean code structure and comments')">
+                            <div class="suggestion-title">💻 Code Generation</div>
+                            <div class="suggestion-desc">Syntax-highlighted blocks with explanations</div>
+                        </div>
+                        <div class="suggestion" onclick="setPrompt('Create a structured breakdown of a project with phases and timelines')">
+                            <div class="suggestion-title">📋 Structured Planning</div>
+                            <div class="suggestion-desc">Phased breakdowns with collapsible sections</div>
+                        </div>
+                        <div class="suggestion" onclick="setPrompt('Analyze data trends and present findings in formatted tables')">
+                            <div class="suggestion-title">📈 Data Analysis</div>
+                            <div class="suggestion-desc">Rich tables with trend analysis</div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+{
+  "capturedAt": "2026-06-15T21:41:20.139Z",
+  "base": "https://medibrick.com",
+  "routes": [
+    {
+      "id": "01-home",
+      "path": "/",
+      "name": "Homepage",
+      "section": "Marketing",
+      "url": "https://medibrick.com/",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/01-home.png",
+      "ok": true
+    },
+    {
+      "id": "01-home",
+      "path": "/",
+      "name": "Homepage",
+      "section": "Marketing",
+      "url": "https://medibrick.com/",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/01-home.png",
+      "ok": true
+    },
+    {
+      "id": "02-for-hospitals",
+      "path": "/for-hospitals",
+      "name": "For Hospitals",
+      "section": "Marketing",
+      "url": "https://medibrick.com/for-hospitals",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/02-for-hospitals.png",
+      "ok": true
+    },
+    {
+      "id": "02-for-hospitals",
+      "path": "/for-hospitals",
+      "name": "For Hospitals",
+      "section": "Marketing",
+      "url": "https://medibrick.com/for-hospitals",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/02-for-hospitals.png",
+      "ok": true
+    },
+    {
+      "id": "03-for-professionals",
+      "path": "/for-professionals",
+      "name": "For Professionals",
+      "section": "Marketing",
+      "url": "https://medibrick.com/for-professionals",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/03-for-professionals.png",
+      "ok": true
+    },
+    {
+      "id": "03-for-professionals",
+      "path": "/for-professionals",
+      "name": "For Professionals",
+      "section": "Marketing",
+      "url": "https://medibrick.com/for-professionals",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/03-for-professionals.png",
+      "ok": true
+    },
+    {
+      "id": "04-how-it-works",
+      "path": "/how-it-works",
+      "name": "How It Works",
+      "section": "Marketing",
+      "url": "https://medibrick.com/how-it-works",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/04-how-it-works.png",
+      "ok": true
+    },
+    {
+      "id": "04-how-it-works",
+      "path": "/how-it-works",
+      "name": "How It Works",
+      "section": "Marketing",
+      "url": "https://medibrick.com/how-it-works",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/04-how-it-works.png",
+      "ok": true
+    },
+    {
+      "id": "05-verification",
+      "path": "/verification-process",
+      "name": "Verification Process",
+      "section": "Marketing",
+      "url": "https://medibrick.com/verification-process",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/05-verification.png",
+      "ok": true
+    },
+    {
+      "id": "05-verification",
+      "path": "/verification-process",
+      "name": "Verification Process",
+      "section": "Marketing",
+      "url": "https://medibrick.com/verification-process",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/05-verification.png",
+      "ok": true
+    },
+    {
+      "id": "06-jobs-list",
+      "path": "/jobs",
+      "name": "Jobs listing",
+      "section": "Marketplace",
+      "wait": 3000,
+      "url": "https://medibrick.com/jobs",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/06-jobs-list.png",
+      "ok": true
+    },
+    {
+      "id": "06-jobs-list",
+      "path": "/jobs",
+      "name": "Jobs listing",
+      "section": "Marketplace",
+      "wait": 3000,
+      "url": "https://medibrick.com/jobs",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/06-jobs-list.png",
+      "ok": true
+    },
+    {
+      "id": "07-jobs-landing-doctors",
+      "path": "/jobs/landing/doctors",
+      "name": "SEO landing — Doctors",
+      "section": "Marketplace",
+      "url": "https://medibrick.com/jobs/landing/doctors",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/07-jobs-landing-doctors.png",
+      "ok": true
+    },
+    {
+      "id": "07-jobs-landing-doctors",
+      "path": "/jobs/landing/doctors",
+      "name": "SEO landing — Doctors",
+      "section": "Marketplace",
+      "url": "https://medibrick.com/jobs/landing/doctors",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/07-jobs-landing-doctors.png",
+      "ok": true
+    },
+    {
+      "id": "08-nearby",
+      "path": "/nearby",
+      "name": "Nearby jobs",
+      "section": "Marketplace",
+      "wait": 2000,
+      "url": "https://medibrick.com/nearby",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/08-nearby.png",
+      "ok": true
+    },
+    {
+      "id": "08-nearby",
+      "path": "/nearby",
+      "name": "Nearby jobs",
+      "section": "Marketplace",
+      "wait": 2000,
+      "url": "https://medibrick.com/nearby",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/08-nearby.png",
+      "ok": true
+    },
+    {
+      "id": "09-blog",
+      "path": "/blog",
+      "name": "Blog index",
+      "section": "Content",
+      "url": "https://medibrick.com/blog",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/09-blog.png",
+      "ok": true
+    },
+    {
+      "id": "09-blog",
+      "path": "/blog",
+      "name": "Blog index",
+      "section": "Content",
+      "url": "https://medibrick.com/blog",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/09-blog.png",
+      "ok": true
+    },
+    {
+      "id": "10-auth-main",
+      "path": "/auth",
+      "name": "Auth — entry",
+      "section": "Auth",
+      "url": "https://medibrick.com/auth",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/10-auth-main.png",
+      "ok": true
+    },
+    {
+      "id": "10-auth-main",
+      "path": "/auth",
+      "name": "Auth — entry",
+      "section": "Auth",
+      "url": "https://medibrick.com/auth",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/10-auth-main.png",
+      "ok": true
+    },
+    {
+      "id": "11-auth-phone",
+      "path": "/auth",
+      "name": "Auth — phone form",
+      "section": "Auth",
+      "url": "https://medibrick.com/auth",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/11-auth-phone.png",
+      "ok": true
+    },
+    {
+      "id": "11-auth-phone",
+      "path": "/auth",
+      "name": "Auth — phone form",
+      "section": "Auth",
+      "url": "https://medibrick.com/auth",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/11-auth-phone.png",
+      "ok": true
+    },
+    {
+      "id": "12-complete-profile",
+      "path": "/complete-profile",
+      "name": "Complete profile (gate)",
+      "section": "Onboarding",
+      "url": "https://medibrick.com/complete-profile",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/12-complete-profile.png",
+      "ok": true
+    },
+    {
+      "id": "12-complete-profile",
+      "path": "/complete-profile",
+      "name": "Complete profile (gate)",
+      "section": "Onboarding",
+      "url": "https://medibrick.com/complete-profile",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/12-complete-profile.png",
+      "ok": true
+    },
+    {
+      "id": "13-admin-login",
+      "path": "/admin/login",
+      "name": "Founder admin login",
+      "section": "Admin",
+      "url": "https://medibrick.com/admin/login",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/13-admin-login.png",
+      "ok": true
+    },
+    {
+      "id": "13-admin-login",
+      "path": "/admin/login",
+      "name": "Founder admin login",
+      "section": "Admin",
+      "url": "https://medibrick.com/admin/login",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/13-admin-login.png",
+      "ok": true
+    },
+    {
+      "id": "14-not-found",
+      "path": "/this-page-does-not-exist",
+      "name": "404",
+      "section": "System",
+      "url": "https://medibrick.com/this-page-does-not-exist",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/14-not-found.png",
+      "ok": true
+    },
+    {
+      "id": "14-not-found",
+      "path": "/this-page-does-not-exist",
+      "name": "404",
+      "section": "System",
+      "url": "https://medibrick.com/this-page-does-not-exist",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/14-not-found.png",
+      "ok": true
+    },
+    {
+      "id": "15-job-detail",
+      "path": "/jobs/orthopaedic-surgeon-joint-replacement-bengaluru-e0000000",
+      "name": "Job detail — orthopaedic-surgeon-joint-replacement-bengaluru-e0000000",
+      "section": "Marketplace",
+      "wait": 3000,
+      "url": "https://medibrick.com/jobs/orthopaedic-surgeon-joint-replacement-bengaluru-e0000000",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/15-job-detail.png",
+      "ok": true
+    },
+    {
+      "id": "15-job-detail",
+      "path": "/jobs/orthopaedic-surgeon-joint-replacement-bengaluru-e0000000",
+      "name": "Job detail — orthopaedic-surgeon-joint-replacement-bengaluru-e0000000",
+      "section": "Marketplace",
+      "wait": 3000,
+      "url": "https://medibrick.com/jobs/orthopaedic-surgeon-joint-replacement-bengaluru-e0000000",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/15-job-detail.png",
+      "ok": true
+    },
+    {
+      "id": "16-hospital-profile",
+      "path": "/hospitals/columbia-asia-hospital-whitefield",
+      "name": "Hospital profile — columbia-asia-hospital-whitefield",
+      "section": "Marketplace",
+      "wait": 2500,
+      "url": "https://medibrick.com/hospitals/columbia-asia-hospital-whitefield",
+      "viewport": "desktop",
+      "file": "screenshots/desktop/16-hospital-profile.png",
+      "ok": true
+    },
+    {
+      "id": "16-hospital-profile",
+      "path": "/hospitals/columbia-asia-hospital-whitefield",
+      "name": "Hospital profile — columbia-asia-hospital-whitefield",
+      "section": "Marketplace",
+      "wait": 2500,
+      "url": "https://medibrick.com/hospitals/columbia-asia-hospital-whitefield",
+      "viewport": "mobile",
+      "file": "screenshots/mobile/16-hospital-profile.png",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MediBrick — clinical marketplace identity
+   Navy structure + heart red signal + gold accent */
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 213 53% 24%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 213 53% 24%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 53% 24%;
+
+    /* Heart red #E63946 */
+    --primary: 354 76% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 354 72% 48%;
+
+    /* Medi blue #1D4ED8 */
+    --secondary: 221 83% 53%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 214 32% 94%;
+    --muted-foreground: 215 16% 40%;
+
+    /* Pulse gold #F4B942 */
+    --accent: 42 88% 61%;
+    --accent-foreground: 213 53% 24%;
+
+    --destructive: 354 76% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 158 55% 27%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 42 88% 45%;
+    --warning-foreground: 213 53% 24%;
+
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 354 76% 56%;
+
+    --radius: 0.625rem;
+
+    --glass-bg: 0 0% 100%;
+    --glass-border: 214 32% 88%;
+    --glass-blur: 0px;
+    --glass-highlight: 0 0% 100% / 0.6;
+
+    --gradient-hero: linear-gradient(135deg, hsl(221 83% 53% / 0.06) 0%, hsl(210 40% 98%) 45%, hsl(354 76% 56% / 0.05) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 99%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(354 76% 56%) 0%, hsl(354 72% 48%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(213 53% 24%) 100%);
+
+    --shadow-sm: 0 1px 2px 0 hsl(213 53% 24% / 0.04);
+    --shadow-md: 0 4px 24px hsl(213 53% 24% / 0.08);
+    --shadow-lg: 0 8px 32px hsl(213 53% 24% / 0.1);
+    --shadow-xl: 0 16px 48px hsl(213 53% 24% / 0.12);
+    --shadow-glass: 0 4px 24px hsl(213 53% 24% / 0.08);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 213 53% 24%;
+    --sidebar-primary: 354 76% 56%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 32% 94%;
+    --sidebar-accent-foreground: 213 53% 24%;
+    --sidebar-border: 214 32% 88%;
+    --sidebar-ring: 354 76% 56%;
+
+    --surface-tint: 214 40% 96%;
+  }
+
+  .dark {
+    --background: 213 40% 8%;
+    --foreground: 210 40% 96%;
+
+    --card: 213 35% 11%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 213 35% 11%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 354 76% 58%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 354 76% 52%;
+
+    --secondary: 221 83% 58%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 213 25% 16%;
+    --muted-foreground: 215 16% 65%;
+
+    --accent: 42 88% 55%;
+    --accent-foreground: 213 53% 12%;
+
+    --destructive: 354 72% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 158 48% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 42 88% 50%;
+    --warning-foreground: 213 53% 12%;
+
+    --border: 213 20% 20%;
+    --input: 213 20% 20%;
+    --ring: 354 76% 58%;
+
+    --surface-tint: 213 30% 12%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-foreground;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+  }
+
+  .tabular-nums,
+  [class*="tabular"] {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .font-mono-data {
+    font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .surface-tint {
+    background-color: hsl(var(--surface-tint));
+  }
+
+  .hero-marketplace {
+    background: var(--gradient-hero);
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  }
+
+  h2 {
+    font-size: clamp(1.625rem, 3vw, 2.25rem);
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .glass-strong {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .shadow-glass {
+    box-shadow: var(--shadow-glass);
+  }
+}
+
+.pac-container {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}

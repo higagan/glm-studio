@@ -1,0 +1,73 @@
+=== Ollama Usage Report - Week of 2026-06-07 ===
+Generated: Sun Jun  7 15:36:56 IST 2026
+
+=== Installed Models ===
+
+-- CLOUD Models (via Ollama Pro) --
+  minimax-m3:cloud                    -
+  qwen3-coder:480b-cloud              -
+  mistral-large-3:675b-cloud          -
+  kimi-k2.6:cloud                     -
+
+-- LOCAL Models (runs on your Mac) --
+  qwen2.5-coder:14b                   9.0
+  qwen-fast:latest                    4.7
+  qwen2.5-coder:7b                    4.7
+  gemma3:1b                           815
+  llama3.1:8b                         4.9
+  deepseek-r1:8b                      5.2
+  llama3.2:3b                         2.0
+  mistral:latest                      4.4
+  qwen2.5:7b                          4.7
+  llama3.1:latest                     4.9
+
+=== Currently Running Models ===
+  [LOCAL] deepseek-r1:8b: 5.5GB loaded
+
+=== Model Usage from Logs (Last 7 Days) ===
+  2026-06-07:      117 log entries
+  2026-06-06:        9 log entries
+  2026-06-05:       10 log entries
+  2026-06-04:        1 log entries
+  2026-06-03:       13 log entries
+
+=== Cloud Inference Activity (Last 7 Days) ===
+  Total cloud API calls: 0
+
+  Cloud model usage (from logs):
+
+  OpenClaw agent model usage:
+
+=== Cost Comparison ===
+  Ollama Pro (current):              USD 20/month
+  Claude Pro:                        USD 20/month
+  Claude Code:                       USD 100-200/month (metered)
+  Cursor:                            USD 20/month
+  GitHub Copilot:                    USD 10/month
+
+=== Cloud Model Cost Breakdown (estimates) ===
+  kimi-k2.6:cloud (675B params):     ~USD 1-2 per 100K tokens
+  minimax-m3:cloud:                  ~USD 0.50-1 per 100K tokens
+  mistral-large-3:cloud (675B):      ~USD 1-2 per 100K tokens
+  qwen3-coder:480b-cloud:            ~USD 0.30-0.50 per 100K tokens
+
+=== Value Analysis ===
+  LOCAL models:                      UNLIMITED (free, runs on Mac)
+    - deepseek-r1:8b                 Good reasoning
+    - qwen2.5:7b                     Fast general
+    - llama3.1:8b                    Balanced
+    - qwen2.5-coder:14b              Coding
+
+  CLOUD models:                      Metered via Ollama Pro
+    - kimi-k2.6:cloud                Best quality, slowest
+    - minimax-m3:cloud               Fast, efficient
+    - mistral-large-3:cloud          Strong reasoning
+    - qwen3-coder:cloud              Coding tasks
+
+=== Verdict ===
+  Total cloud models installed:      4
+  Total local models installed:      10
+
+  If using cloud models >5x/week:     Ollama Pro = GOOD VALUE
+  If mainly using local models:       Consider canceling Pro
+  If need all 4 cloud models:        Keep Pro, monitor usage

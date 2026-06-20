@@ -1,0 +1,59 @@
+{
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap.xml" },
+    { "source": "/jobs", "destination": "/api/render" },
+    { "source": "/jobs/:path*", "destination": "/api/render" },
+    { "source": "/hospitals/:path*", "destination": "/api/render-hospital" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    {
+      "source": "/facility/:slug",
+      "destination": "/hospitals/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.medibrick.com" }],
+      "destination": "https://medibrick.com/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "medibrick.vercel.app" }],
+      "destination": "https://medibrick.com/$1",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://apis.google.com https://*.googleapis.com https://*.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://*.googleapis.com https://*.vercel.app https://*.sentry.io; frame-src 'self' https://accounts.google.com https://www.google.com https://maps.google.com;"
+        }
+      ]
+    }
+  ]
+}
