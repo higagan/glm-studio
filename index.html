@@ -1186,6 +1186,24 @@ Notes: Linger on this one — the 9 PM soap was the social glue of the household
       #connectCard .x { position:absolute; }
       #connectCard .small { font-size:12.5px; color:var(--text-tertiary,#8a857d); margin-top:10px; }
       #connectCard #connMsg { font-size:13px; margin-top:8px; min-height:18px; }
+      /* Claude-style thinking block: dimmed, clearly separate from the answer. */
+      .thinking-block { margin:0 0 12px; padding-left:12px; border-left:2px solid var(--border,#3a3835);
+        opacity:.62; max-height:260px; overflow:auto; }
+      .thinking-block .thinking-header { display:flex; align-items:center; gap:7px; font-size:13px;
+        font-weight:600; color:var(--accent,#d97757); margin-bottom:4px; }
+      .thinking-block .thinking-pulse { width:7px; height:7px; border-radius:50%; background:var(--accent,#d97757);
+        animation:thinkpulse 1.1s ease-in-out infinite; }
+      @keyframes thinkpulse { 0%,100%{opacity:.25; transform:scale(.8)} 50%{opacity:1; transform:scale(1)} }
+      .thinking-block .thinking-body { font-size:13.5px; line-height:1.55; color:var(--text-secondary,#b8b3aa);
+        font-style:italic; }
+      .thinking-block .thinking-body p { margin:0 0 6px; }
+      .thinking-block details > summary { cursor:pointer; list-style:none; font-size:13px; font-weight:500;
+        color:var(--text-secondary,#b8b3aa); user-select:none; }
+      .thinking-block details > summary::-webkit-details-marker { display:none; }
+      .thinking-block details > summary::before { content:'▸ '; }
+      .thinking-block details[open] > summary::before { content:'▾ '; }
+      .thinking-block details[open] { max-height:none; }
+      .message-body > .response-body:first-child { margin-top:0; }
     </style>
     <div id="demoBanner">
       <strong>Hosted demo</strong> — chat with your own Ollama from this page: open <a href="#" onclick="openSettings();return false">Settings → Ollama URL</a> and paste <code>http://localhost:11434</code> (run Ollama with <code>OLLAMA_ORIGINS=*</code>).
@@ -2038,7 +2056,7 @@ Topic: ${t}`
 
         function genMsgId() { return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`; }
         function findEntry(id) { return currentChat.find(m => m.id === id); }
-        function addMessage(role, content, attachments, streaming = false, id = null) {
+        function addMessage(role, content, attachments, streaming = false, id = null, thinking = null) {
             const container = document.getElementById('messagesInner');
             if (!id) id = genMsgId();
             const div = document.createElement('div');
@@ -2059,7 +2077,8 @@ Topic: ${t}`
                     return chip;
                 }).join('') + '</div>';
             }
-            const bodyContent = streaming ? '<div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>' : renderMarkdown(content);
+            const bodyContent = streaming ? '<div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>'
+                : (role === 'assistant' && thinking ? assistantBodyHTML(thinking, content, false) : renderMarkdown(content));
             div.innerHTML = `<div class="message-row"><div class="message-avatar ${avatarClass}">${avatarLabel}</div><div class="message-content"><div class="message-role">${roleName}</div>${attHtml}<div class="message-body" id="body-${id}">${bodyContent}</div></div></div>`;
             div.oncontextmenu = (e) => { e.preventDefault(); showMsgContextMenu(e, id); };
             container.appendChild(div);
@@ -2075,7 +2094,7 @@ Topic: ${t}`
             container.innerHTML = '';
             for (const msg of currentChat) {
                 if (!msg.id) msg.id = genMsgId();
-                addMessage(msg.role, msg.content, msg.attachments, false, msg.id);
+                addMessage(msg.role, msg.content, msg.attachments, false, msg.id, msg.thinking);
             }
             document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
         }
@@ -2086,6 +2105,35 @@ Topic: ${t}`
                 document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
                 if (finalize) renderMath(body);
             }
+        }
+        // Compose an assistant message body that keeps the model's "thinking"
+        // separate from its actual answer (Claude-style): while the model is still
+        // thinking and hasn't produced an answer yet, show a live "Thinking…" block;
+        // once an answer exists, tuck the thinking into a collapsible "Thought
+        // process" so the answer is what the eye lands on — instead of showing the
+        // thinking as if it were the answer and then replacing it.
+        function assistantBodyHTML(thinking, content, live) {
+            const hasThink = !!(thinking && thinking.trim());
+            const hasContent = !!(content && content.trim());
+            let html = '';
+            if (hasThink) {
+                if (hasContent) {
+                    // answer exists — thinking is auxiliary, collapse it away
+                    html += `<details class="thinking-block"><summary>Thought process</summary><div class="thinking-body">${renderMarkdown(thinking)}</div></details>`;
+                } else {
+                    // no answer (yet, or never) — show thinking as the live/main body
+                    const header = live ? `<div class="thinking-header"><span class="thinking-pulse"></span>Thinking…</div>` : '';
+                    html += `<div class="thinking-block">${header}<div class="thinking-body">${renderMarkdown(thinking)}</div></div>`;
+                }
+            }
+            if (hasContent) html += `<div class="response-body">${renderMarkdown(content)}</div>`;
+            return html;
+        }
+        function updateAssistantStream(id, thinking, content) {
+            const body = document.getElementById(`body-${id}`);
+            if (!body) return;
+            body.innerHTML = assistantBodyHTML(thinking, content, true);
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
         }
         function renderMath(el) {
             try {
@@ -2270,7 +2318,7 @@ Topic: ${t}`
             sendBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
             sendBtn.onclick = stopGeneration;
             abortController = new AbortController();
-            let fullContent = '', fullThinking = '', hasContent = false;
+            let fullContent = '', fullThinking = '';
             try {
                 // Build messages for Ollama. Images are attached only to the most
                 // recent user turn (older images would be re-sent every turn and
@@ -2306,25 +2354,32 @@ Topic: ${t}`
                         if (!line.trim()) continue;
                         try {
                             const data = JSON.parse(line);
-                            if (data.message?.content) { fullContent += data.message.content; hasContent = true; updateMessage(msgId, fullContent); }
-                            if (data.message?.thinking) { fullThinking += data.message.thinking; if (!hasContent) updateMessage(msgId, fullThinking); }
+                            if (data.message?.content) fullContent += data.message.content;
+                            if (data.message?.thinking) fullThinking += data.message.thinking;
+                            if (fullContent || fullThinking) updateAssistantStream(msgId, fullThinking, fullContent);
                             if (data.done) break;
                         } catch (e) {}
                     }
                 }
-                const finalText = fullContent || fullThinking || 'No response received';
-                currentChat.push({ role: 'assistant', content: finalText, id: msgId });
-                updateMessage(msgId, finalText, true);
+                // The stored answer is the real response (not the thinking). Keep
+                // the thinking alongside it so a reload still shows the "Thought
+                // process" block, but detect artifacts from the answer only.
+                if (!fullContent && !fullThinking) fullContent = 'No response received';
+                const entry = { role: 'assistant', content: fullContent, id: msgId };
+                if (fullThinking) entry.thinking = fullThinking;
+                currentChat.push(entry);
+                const finalBody = document.getElementById(`body-${msgId}`);
+                if (finalBody) { finalBody.innerHTML = assistantBodyHTML(fullThinking, fullContent, false); renderMath(finalBody); }
+                document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
                 // Detect artifacts and add "Open in panel" button
-                const artifacts = detectArtifacts(finalText);
+                const artifacts = detectArtifacts(fullContent);
                 if (artifacts.length) {
-                    const body = document.getElementById(`body-${msgId}`);
-                    if (body) {
+                    if (finalBody) {
                         const btn = document.createElement('button');
                         btn.className = 'open-in-panel-btn';
                         btn.innerHTML = `📄 Open in panel →`;
                         btn.onclick = () => openArtifactPanel(artifacts, msgId);
-                        body.appendChild(btn);
+                        finalBody.appendChild(btn);
                     }
                     if (autoOpenPanel && window.innerWidth >= 1024) {
                         openArtifactPanel(artifacts, msgId);
@@ -2336,10 +2391,11 @@ Topic: ${t}`
                 if (e.name === 'AbortError') {
                     const partial = fullContent || fullThinking || '';
                     if (partial) {
-                        currentChat.push({ role: 'assistant', content: partial, id: msgId });
-                        updateMessage(msgId, partial, true);
+                        const entry = { role: 'assistant', content: fullContent || partial, id: msgId };
+                        if (fullThinking) entry.thinking = fullThinking;
+                        currentChat.push(entry);
                         const body = document.getElementById(`body-${msgId}`);
-                        if (body) {
+                        if (body) { body.innerHTML = assistantBodyHTML(fullThinking, fullContent || partial, false); renderMath(body);
                             const note = document.createElement('div');
                             note.className = 'stopped-note';
                             note.textContent = 'Generation stopped.';
