@@ -3277,7 +3277,7 @@ Topic: ${t}`
             if (/^\s*>/m.test(body)) return 'quote';
             if (/^\s*(Left|Right)\s*:/m.test(body)) return 'split';
             // Stats: ≥2 bullet lines whose bold lead is a number/currency/percent.
-            const statRe = /^[-*]\s+\*{2}[\d$€£%][\d.,$%€£\w\s]*\*{2}\s*[:—-]\s+.+/;
+            const statRe = /^[-*]\s+\*{2}[\d$€£%#][\d.,$%€£\w\s]*\*{2}\s*[:—-]\s+.+/;
             const statLines = body.split('\n').filter(l => statRe.test(l.trim()));
             if (statLines.length >= 2) return 'stats';
             if (/!\[[^\]]*\]\([^)]+\)/.test(body)) return 'image';
