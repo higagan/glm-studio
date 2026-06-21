@@ -3579,8 +3579,8 @@ Topic: ${t}`
         function pptxPalette() {
             const dark = document.documentElement.dataset.theme === 'dark';
             return dark
-                ? { ACCENT:'D97757', ACCENTSOFT:'3A2A22', TEXT:'F5F3EF', MUTED:'A39B91', PANEL:'2A2826', BG:'1F1E1D', BORDER:'3A3835' }
-                : { ACCENT:'D97757', ACCENTSOFT:'FBEDE4', TEXT:'1A1A1A', MUTED:'6B6B6B', PANEL:'F5F4F2', BG:'FFFFFF', BORDER:'E5E3DF' };
+                ? { ACCENT:'D97757', ACCENTSOFT:'3A2A22', TINT:'33251F', NUMERAL:'4A332A', TEXT:'F5F3EF', MUTED:'A39B91', PANEL:'2A2826', BG:'1F1E1D', BORDER:'3A3835' }
+                : { ACCENT:'D97757', ACCENTSOFT:'FBEDE4', TINT:'FBEDE4', NUMERAL:'F2D8CC', TEXT:'1A1A1A', MUTED:'6B6B6B', PANEL:'F5F4F2', BG:'FFFFFF', BORDER:'E5E3DF' };
         }
 
         function renderSlideHTML(slide, opts) {
@@ -4175,18 +4175,40 @@ Topic: ${t}`
         }
 
         // ---- PowerPoint (.pptx) export -------------------------------------------------
-        function downloadSlidePptx(tab) {
+        async function downloadSlidePptx(tab) {
             if (typeof PptxGenJS === 'undefined') { showToast('PPTX library failed to load (check your connection)'); return; }
             const slides = parseSlides(tab.content);
             if (!slides.length) { showToast('No slides to export'); return; }
-            const ACCENT = 'D97757', ACCENTSOFT = 'FBEDE4', TEXT = '1A1A1A', MUTED = '6B6B6B', PANEL = 'F5F4F2';
+            // Theme-aware palette — a dark-mode deck exports dark. PptxGenJS needs solid hex.
+            const P = pptxPalette();
+            const ACCENT = P.ACCENT, ACCENTSOFT = P.ACCENTSOFT, TINT = P.TINT, NUMERAL = P.NUMERAL;
+            const TEXT = P.TEXT, MUTED = P.MUTED, PANEL = P.PANEL, BG = P.BG, BORDER = P.BORDER;
             const pptx = new PptxGenJS();
             pptx.layout = 'LAYOUT_16x9'; // 10 x 5.625 in
             pptx.author = 'GLM Studio';
             const W = 10, H = 5.625;
 
-            const headingOf = (b) => (b.match(/^##\s+(.+)/m) || [])[1] || '';
-            const afterHeading = (b) => b.replace(/^##\s+.+\n?/m, '').trim();
+            // Photos resolved for the on-screen deck (PR 3). Embed as base64 so the .pptx
+            // is self-contained; fall back to generated visuals if a fetch fails.
+            const photos = (document.getElementById('apPreview') || {})._photos || {};
+            const photoFor = (i) => (photos[i] && photos[i].url) ? photos[i] : null;
+            const fetchImageAsBase64 = async (url) => {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) return null;
+                    const blob = await res.blob();
+                    return await new Promise((resolve) => {
+                        const fr = new FileReader();
+                        fr.onload = () => resolve(fr.result);
+                        fr.onerror = () => resolve(null);
+                        fr.readAsDataURL(blob);
+                    });
+                } catch (e) { return null; }
+            };
+
+            // Body with the leading "# / ##" heading line removed — s.heading carries it.
+            const content = (s) => s.body.replace(/^\s*#{1,2}\s+.+\n?/m, '').trim();
+
             // Convert a line of inline markdown (**bold**, *italic*, `code`) into PptxGen run objects.
             const inlineRuns = (text, base) => {
                 const runs = []; const re = /(\*\*([^*]+)\*\*|\*([^*]+)\*|`([^`]+)`)/g; let last = 0, m;
@@ -4207,8 +4229,8 @@ Topic: ${t}`
                 lines.forEach((line, i) => {
                     const bm = line.match(/^[-*]\s+(.*)/);
                     const isBullet = !!bm;
-                    const content = bm ? bm[1] : line;
-                    const paraRuns = inlineRuns(content, { ...base });
+                    const c = bm ? bm[1] : line;
+                    const paraRuns = inlineRuns(c, { ...base });
                     if (isBullet) paraRuns[0].options = { ...paraRuns[0].options, bullet: true };
                     paraRuns[paraRuns.length - 1].options = { ...paraRuns[paraRuns.length - 1].options, breakLine: i < lines.length - 1 };
                     runs.push(...paraRuns);
@@ -4216,18 +4238,35 @@ Topic: ${t}`
                 return runs;
             };
 
-            slides.forEach((s) => {
+            for (const s of slides) {
                 const slide = pptx.addSlide();
                 if (s.notes) slide.addNotes(s.notes);
+                const heading = s.heading || '';
 
                 if (s.layout === 'title') {
-                    const m = s.body.match(/^#\s+(.+)/m);
-                    const title = m ? m[1] : s.body.split('\n')[0];
                     const subtitle = s.body.split('\n').slice(1).join('\n').trim().replace(/^##\s+/, '');
+                    const photo = photoFor(s.index);
+                    const data = photo ? await fetchImageAsBase64(photo.url) : null;
+                    if (data) {
+                        slide.background = { color: '000000' };
+                        slide.addImage({ data, x: 0, y: 0, w: W, h: H, sizing: { type: 'cover', w: W, h: H } });
+                        slide.addShape('rect', { x: 0, y: 0, w: W, h: H, fill: { color: '000000', transparency: 40 } });
+                        slide.addShape('rect', { x: W / 2 - 1, y: 2.55, w: 2, h: 0.07, fill: { color: ACCENT } });
+                        slide.addText(heading, { x: 0.5, y: 2.0, w: W - 1, h: 1.4, fontSize: 40, bold: true, color: 'FFFFFF', align: 'center', fontFace: 'Arial' });
+                        if (subtitle) slide.addText(subtitle, { x: 0.5, y: 3.5, w: W - 1, h: 0.8, fontSize: 18, color: 'FFFFFF', align: 'center', fontFace: 'Arial' });
+                        if (photo.artist) slide.addText(`${photo.artist} · ${photo.license}`, { x: 0.5, y: H - 0.4, w: W - 1, h: 0.3, fontSize: 9, color: 'D9D9D9', align: 'right' });
+                    } else {
+                        slide.background = { color: ACCENTSOFT };
+                        slide.addShape('rect', { x: W / 2 - 1, y: 1.65, w: 2, h: 0.07, fill: { color: ACCENT } });
+                        slide.addText(heading, { x: 0.5, y: 2.0, w: W - 1, h: 1.4, fontSize: 40, bold: true, color: TEXT, align: 'center', fontFace: 'Arial' });
+                        if (subtitle) slide.addText(subtitle, { x: 0.5, y: 3.5, w: W - 1, h: 0.8, fontSize: 18, color: MUTED, align: 'center', fontFace: 'Arial' });
+                    }
+                } else if (s.layout === 'section') {
+                    const numeral = String((s.index || 0) + 1).padStart(2, '0');
                     slide.background = { color: ACCENTSOFT };
-                    slide.addShape('rect', { x: W / 2 - 1, y: 1.65, w: 2, h: 0.07, fill: { color: ACCENT } });
-                    slide.addText(title, { x: 0.5, y: 2.0, w: W - 1, h: 1.4, fontSize: 40, bold: true, color: TEXT, align: 'center', fontFace: 'Arial' });
-                    if (subtitle) slide.addText(subtitle, { x: 0.5, y: 3.5, w: W - 1, h: 0.8, fontSize: 18, color: MUTED, align: 'center', fontFace: 'Arial' });
+                    slide.addText(numeral, { x: 0, y: 0.3, w: W, h: 4.6, fontSize: 240, bold: true, color: NUMERAL, align: 'center', valign: 'middle', fontFace: 'Arial' });
+                    slide.addShape('rect', { x: W / 2 - 0.5, y: 2.35, w: 1, h: 0.06, fill: { color: ACCENT } });
+                    slide.addText(heading, { x: 1, y: 2.55, w: W - 2, h: 1.2, fontSize: 32, bold: true, color: TEXT, align: 'center', fontFace: 'Arial' });
                 } else if (s.layout === 'quote') {
                     slide.background = { color: PANEL };
                     const qm = s.body.match(/>\s*(.+)/);
@@ -4236,47 +4275,94 @@ Topic: ${t}`
                     slide.addText(`"${quote}"`, { x: 1, y: 1.7, w: W - 2, h: 1.9, fontSize: 26, italic: true, color: TEXT, align: 'center', valign: 'middle', fontFace: 'Georgia' });
                     if (attr) slide.addText(`— ${attr[1]}`, { x: 1, y: 3.8, w: W - 2, h: 0.6, fontSize: 14, color: MUTED, align: 'center' });
                 } else if (s.layout === 'split') {
-                    const heading = headingOf(s.body);
-                    const leftM = s.body.match(/Left:\s*\*?\*?(.+?)(?=\n\s*Right:|$)/s);
-                    const rightM = s.body.match(/Right:\s*\*?\*?(.+)$/s);
+                    const c = content(s);
+                    const leftM = c.match(/Left:\s*(.+?)(?=\n\s*Right:|$)/s);
+                    const rightM = c.match(/Right:\s*(.+)$/s);
                     const left = (leftM ? leftM[1] : '').trim();
                     const right = (rightM ? rightM[1] : '').trim();
                     slide.addShape('rect', { x: 0, y: 0, w: 0.12, h: H, fill: { color: ACCENT } });
                     if (heading) slide.addText(heading, { x: 0.5, y: 0.35, w: W - 1, h: 0.8, fontSize: 26, bold: true, color: TEXT, fontFace: 'Arial' });
-                    slide.addShape('rect', { x: 0.5, y: 1.4, w: 4.3, h: 3.7, fill: { color: PANEL } });
+                    slide.addShape('rect', { x: 0.5, y: 1.4, w: 4.3, h: 3.7, fill: { color: TINT } });
                     slide.addShape('rect', { x: 5.2, y: 1.4, w: 4.3, h: 3.7, fill: { color: PANEL } });
                     slide.addText(bulletParagraphs(left, { fontSize: 13, color: TEXT }), { x: 0.75, y: 1.6, w: 3.8, h: 3.3, valign: 'top', lineSpacingMultiple: 1.2, paraSpaceAfter: 4 });
                     slide.addText(bulletParagraphs(right, { fontSize: 13, color: TEXT }), { x: 5.45, y: 1.6, w: 3.8, h: 3.3, valign: 'top', lineSpacingMultiple: 1.2, paraSpaceAfter: 4 });
+                } else if (s.layout === 'stats') {
+                    const statRe = /^[-*]\s+\*{2}(.+?)\*{2}\s*[:—-]\s+(.+)$/;
+                    const stats = content(s).split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+                        const sm = l.match(statRe);
+                        return sm ? { value: sm[1].trim(), label: sm[2].trim() } : { value: l.replace(/^[-*]\s+/, '').replace(/^\*{2}|\*{2}$/g, ''), label: '' };
+                    }).filter(x => x.value).slice(0, 3);
+                    slide.background = { color: BG };
+                    slide.addShape('rect', { x: 0, y: 0, w: 0.12, h: H, fill: { color: ACCENT } });
+                    if (heading) slide.addText(heading, { x: 0.5, y: 0.35, w: W - 1, h: 0.8, fontSize: 24, bold: true, color: TEXT, fontFace: 'Arial' });
+                    const n = Math.max(1, Math.min(stats.length, 3));
+                    const colW = (W - 1.2) / n;
+                    stats.forEach((st, i) => {
+                        const x = 0.6 + i * colW;
+                        slide.addShape('rect', { x, y: 1.5, w: colW - 0.2, h: 3.2, fill: { color: PANEL }, line: { color: BORDER, width: 1 } });
+                        slide.addShape('rect', { x, y: 1.5, w: 0.1, h: 3.2, fill: { color: ACCENT } });
+                        slide.addText(st.value, { x: x + 0.25, y: 1.7, w: colW - 0.6, h: 1.3, fontSize: 34, bold: true, color: ACCENT, align: 'left', valign: 'middle', fontFace: 'Arial' });
+                        if (st.label) slide.addText(st.label, { x: x + 0.25, y: 3.1, w: colW - 0.6, h: 1.4, fontSize: 13, color: MUTED, align: 'left', valign: 'top' });
+                    });
+                } else if (s.layout === 'image') {
+                    const photo = photoFor(s.index);
+                    const imgMatch = content(s).match(/!\[[^\]]*\]\(([^)]+)\)/) || s.body.match(/!\[[^\]]*\]\(([^)]+)\)/);
+                    const url = imgMatch ? imgMatch[1] : null;
+                    const caption = content(s).replace(/!\[[^\]]*\]\([^)]+\)/, '').trim() || heading;
+                    const src = photo ? photo.url : url;
+                    const data = src ? await fetchImageAsBase64(src) : null;
+                    if (data) {
+                        slide.background = { color: BG };
+                        slide.addImage({ data, x: 0.5, y: 0.4, w: W - 1, h: 3.7, sizing: { type: 'contain', w: W - 1, h: 3.7 } });
+                        if (caption) slide.addText(caption, { x: 0.5, y: 4.2, w: W - 1, h: 0.6, fontSize: 14, color: TEXT, align: 'center', fontFace: 'Arial' });
+                        if (photo && photo.artist) slide.addText(`${photo.artist} · ${photo.license}`, { x: 0.5, y: H - 0.35, w: W - 1, h: 0.3, fontSize: 9, color: MUTED, align: 'right' });
+                    } else {
+                        slide.background = { color: ACCENTSOFT };
+                        slide.addShape('rect', { x: W / 2 - 1.2, y: 0.7, w: 2.4, h: 2.4, fill: { color: TINT }, line: { color: ACCENT, width: 1 } });
+                        slide.addText(iconFor(heading, s.layout), { x: W / 2 - 1.2, y: 0.7, w: 2.4, h: 2.4, fontSize: 90, align: 'center', valign: 'middle' });
+                        if (heading) slide.addText(heading, { x: 1, y: 3.35, w: W - 2, h: 0.8, fontSize: 22, bold: true, color: TEXT, align: 'center', fontFace: 'Arial' });
+                        if (caption && caption !== heading) slide.addText(caption, { x: 1, y: 4.2, w: W - 2, h: 0.6, fontSize: 13, color: MUTED, align: 'center' });
+                    }
                 } else if (s.layout === 'chart') {
-                    const heading = headingOf(s.body);
                     const spec = extractChartSpec(s.body);
                     slide.addShape('rect', { x: 0, y: 0, w: 0.12, h: H, fill: { color: ACCENT } });
                     if (heading) slide.addText(heading, { x: 0.5, y: 0.3, w: W - 1, h: 0.8, fontSize: 24, bold: true, color: TEXT, fontFace: 'Arial' });
                     if (spec) {
                         try {
-                            const typeMap = { bar: pptx.ChartType.bar, line: pptx.ChartType.line, pie: pptx.ChartType.pie, doughnut: pptx.ChartType.doughnut };
+                            const typeMap = { bar: pptx.ChartType.bar, line: pptx.ChartType.line, pie: pptx.ChartType.pie, doughnut: pptx.ChartType.doughnut, scatter: pptx.ChartType.scatter };
                             const cType = typeMap[spec.chart_type] || pptx.ChartType.bar;
-                            const data = (spec.data && spec.data.datasets ? spec.data.datasets : []).map(ds => ({
-                                name: ds.label || 'Series',
-                                labels: spec.data.labels || [],
-                                values: ds.data || []
-                            }));
+                            let data;
+                            if (cType === pptx.ChartType.scatter) {
+                                data = ((spec.data && spec.data.datasets) || []).map(ds => ({
+                                    name: ds.label || 'Series',
+                                    values: (ds.data || []).map(pt => Array.isArray(pt) ? { x: pt[0], y: pt[1] } : { x: pt.x, y: pt.y })
+                                }));
+                            } else {
+                                data = ((spec.data && spec.data.datasets) || []).map(ds => ({
+                                    name: ds.label || 'Series',
+                                    labels: (spec.data && spec.data.labels) || [],
+                                    values: ds.data || []
+                                }));
+                            }
                             const palette = [ACCENT, 'E8A87C', '8C7B6B', 'C9B45A', '6E8B6E', '5A6E8C'];
                             const chartOpts = { x: 0.6, y: 1.3, w: W - 1.2, h: H - 1.7, showLegend: data.length > 1 || spec.chart_type === 'pie' || spec.chart_type === 'doughnut', chartColors: palette };
                             if (cType === pptx.ChartType.bar) chartOpts.barDir = 'col';
                             if (spec.chart_type === 'pie' || spec.chart_type === 'doughnut') chartOpts.dataLabelPosition = 'outEnd';
                             slide.addChart(cType, data, chartOpts);
                         } catch (e) { slide.addText('[chart could not be rendered]', { x: 0.6, y: 2.5, w: W - 1.2, h: 0.6, color: MUTED, align: 'center' }); }
+                    } else {
+                        // spec missing — don't leave a blank chart frame
+                        slide.addText('Chart data unavailable — see notes.', { x: 0.6, y: 2.1, w: W - 1.2, h: 0.5, color: MUTED, align: 'center', italic: true });
+                        const items = content(s);
+                        if (items) slide.addText(bulletParagraphs(items, { fontSize: 14, color: TEXT }), { x: 0.7, y: 2.6, w: W - 1.3, h: 2.4, valign: 'top' });
                     }
                 } else {
                     // bullets (default)
-                    const heading = headingOf(s.body);
-                    const items = afterHeading(s.body);
                     slide.addShape('rect', { x: 0, y: 0, w: 0.12, h: H, fill: { color: ACCENT } });
                     if (heading) slide.addText(heading, { x: 0.5, y: 0.35, w: W - 1, h: 0.85, fontSize: 26, bold: true, color: TEXT, fontFace: 'Arial' });
-                    slide.addText(bulletParagraphs(items, { fontSize: 16, color: TEXT }), { x: 0.7, y: 1.45, w: W - 1.3, h: H - 1.7, valign: 'top', lineSpacingMultiple: 1.25, paraSpaceAfter: 8 });
+                    slide.addText(bulletParagraphs(content(s), { fontSize: 16, color: TEXT }), { x: 0.7, y: 1.45, w: W - 1.3, h: H - 1.7, valign: 'top', lineSpacingMultiple: 1.25, paraSpaceAfter: 8 });
                 }
-            });
+            }
 
             pptx.writeFile({ fileName: sanitizeFilename(tab.title) + '.pptx' }).then(() => showToast('Downloaded ' + sanitizeFilename(tab.title) + '.pptx')).catch(() => showToast('PPTX export failed'));
         }
