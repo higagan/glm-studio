@@ -1148,6 +1148,102 @@ Notes: Linger on this one — the 9 PM soap was the social glue of the household
   { "front": "What did OTT unbundle from linear TV?", "back": "Scheduling and the channel bundle — viewers watch on-demand, on any device." }
 ]</script>
 
+    <!-- A second demo deck in the plain-chat "title form" (## Slide N: <Heading>,
+         deck-level # Title, ### subheads, a table, --- separators). This is the
+         shape a deck takes when the model isn't steered toward the keyword format.
+         Seeded by ?demo2 so we can verify the robust parser renders the titles that
+         the old parser dropped. -->
+    <script type="text/plain" id="niveaDeck"># Nivea Company Overview
+
+---
+
+## Slide 1: Introduction to Nivea
+
+- **Founded**: 1882 by Paul Carl Beiersdorf
+- **Parent Company**: Beiersdorf AG (Hamburg, Germany)
+- **Industry**: Personal care & skincare
+- **Global Presence**: Operates in 200+ countries worldwide
+
+Nivea is one of the world's most recognized skincare brands, known for its signature blue tin packaging and gentle formulations suitable for all skin types.
+
+---
+
+## Slide 2: Brand Portfolio & Products
+
+### Core Product Categories
+
+- **Face Care**: Cleansers, moisturizers, anti-aging creams
+- **Body Care**: Lotions, body wash, deodorants
+- **Sun Care**: SPF protection products
+- **Men's Care**: Nivea Men line launched in 1980s
+- **Baby Care**: Gentle products for infants
+
+### Key Iconic Products
+
+| Product | Launch Year | Significance |
+|---------|-------------|-------------|
+| Nivea Creme (blue tin) | 1911 | First stable oil-in-water emulsion |
+| Nivea Milk | 1960s | Expanded moisturizer format |
+| Nivea Visage | 1980s | Dedicated face care line |
+
+---
+
+## Slide 3: Brand Values & Positioning
+
+### Core Brand Pillars
+
+- **Trust**: 130+ years of skincare expertise
+- **Care**: Gentle, dermatologically tested formulas
+- **Simplicity**: Clear, honest products for everyday use
+- **Inclusivity**: Products for all ages, skin types, genders
+
+### Marketing Approach
+
+- Consistent blue-and-white brand identity
+- Focus on family and universal skincare needs
+- Affordable premium positioning
+- Strong retail partnerships with drugstores and supermarkets
+
+---
+
+## Slide 4: Sustainability & Innovation
+
+### Environmental Commitments
+
+- **Climate**: Carbon neutral production sites by 2030
+- **Packaging**: 100% recyclable packaging goal
+- **Ingredients**: Sustainable sourcing, palm oil RSPO certified
+- **Water**: Reduction in water usage across manufacturing
+
+### R&D Innovation
+
+- **Beiersdorf Research Centers**: Hamburg, China, USA
+- **Patents**: 1,000+ active patents worldwide
+- **Skin Research**: Pioneering work in skin biology and aging
+- **Recent Launch**: Nivea Cellular Expertise line with anti-aging technology
+
+---
+
+## Slide 5: Market Performance & Future Outlook
+
+### Key Metrics
+
+- **Revenue**: Beiersdorf consumer segment ~€7.5 billion (2023)
+- **Market Position**: #1 skincare brand in Europe
+- **Brand Value**: Consistently ranked among top global personal care brands
+- **Digital Growth**: Expanding e-commerce and direct-to-consumer channels
+
+### Strategic Focus Areas
+
+- **Digital Transformation**: Enhanced online presence and personalization
+- **Emerging Markets**: Expansion in Asia-Pacific and Latin America
+- **Clean Beauty**: Reformulation toward natural and sustainable ingredients
+- **Dermatological Innovation**: Advanced skincare solutions backed by science
+
+---
+
+*Nivea continues to balance its heritage as a trusted mass-market brand with innovation in sustainable, science-backed skincare for future growth.*</script>
+
     <style>
       #demoBanner { display:none; position:fixed; top:0; left:0; right:0; z-index:9999;
         background:var(--bg,#1f1e1d); border-bottom:1px solid var(--border,#3a3835);
@@ -1551,6 +1647,18 @@ Topic: ${t}`
             hideWelcome();
             renderChat();
             renderHistory();
+            // In demo modes, auto-open the first assistant artifact so visitors land on
+            // a rendered deck (the README promises this) instead of an empty panel —
+            // the panel otherwise only opens during live streaming. Prefer the slide
+            // deck tab when one is present so the headline feature is what shows.
+            if (isDemoMode() || isDemo2Mode()) {
+                const firstArt = currentChat.find(m => m.role === 'assistant' && detectArtifacts(m.content).length);
+                if (firstArt && window.innerWidth >= 768) {
+                    openArtifactPanel(detectArtifacts(firstArt.content), firstArt.id);
+                    const deckTab = panelTabs.find(t => t.type === 'slide_deck');
+                    if (deckTab) { activeTabId = deckTab.id; renderActiveTab(); }
+                }
+            }
         }
         // --- Static demo (GitHub Pages showcase) ---
         // On github.io (or ?demo anywhere), seed a sample conversation once so the
@@ -1562,6 +1670,13 @@ Topic: ${t}`
                 return location.hostname.endsWith('github.io')
                     || new URLSearchParams(location.search).has('demo');
             } catch (e) { return false; }
+        }
+        // ?demo2 seeds the plain-chat "title form" Nivea deck — used to verify the
+        // robust parser renders titles the old parser dropped. Separate flag so it
+        // doesn't clobber the regular Indian-TV demo.
+        function isDemo2Mode() {
+            try { return new URLSearchParams(location.search).has('demo2'); }
+            catch (e) { return false; }
         }
         function seedDemo() {
             if (!isDemoMode()) return;
@@ -1587,6 +1702,28 @@ Topic: ${t}`
             }
             localStorage.setItem(ACTIVE_KEY, conv.id);
             localStorage.setItem('glm-demo-seeded', '1');
+        }
+        function seedDemo2() {
+            if (!isDemo2Mode()) return;
+            if (localStorage.getItem('glm-demo2-seeded')) return;
+            const deck = (document.getElementById('niveaDeck') || {}).textContent || '';
+            if (!deck.trim()) return;
+            const now = Date.now();
+            const conv = {
+                id: 'conv-demo2-' + now,
+                title: 'Demo · Nivea Company Overview',
+                updatedAt: now,
+                messages: [
+                    { role: 'user', id: 'd2-u1', content: 'Make me a 5-slide deck on Nivea company.' },
+                    { role: 'assistant', id: 'd2-a1', content: deck.trim() }
+                ]
+            };
+            const convs = getConversations();
+            if (!convs.some(c => c.id.startsWith('conv-demo2-'))) {
+                saveConversations([conv, ...convs]);
+            }
+            localStorage.setItem(ACTIVE_KEY, conv.id);
+            localStorage.setItem('glm-demo2-seeded', '1');
         }
         function showDemoBanner() {
             if (!isDemoMode()) return;
@@ -2581,9 +2718,25 @@ Topic: ${t}`
             return artifacts;
         }
 
+        const SLIDE_LAYOUTS = ['title', 'section', 'bullets', 'split', 'chart', 'quote', 'stats', 'image'];
+
         function extractSlideTitle(content) {
-            const m = content.match(/## Slide 1:\s*title\s*\n#\s+(.+)/i);
-            return m ? m[1].trim() : null;
+            // Keyword form: "## Slide 1: title" followed by a "# Heading" line.
+            let m = content.match(/## Slide 1:\s*title\s*\n\s*#\s+(.+)/i);
+            if (m) return m[1].trim();
+            // Deck-level "# Title" sitting before the first slide (plain-chat form).
+            const firstSlide = content.search(/## Slide \d+:/i);
+            if (firstSlide !== -1) {
+                m = content.slice(0, firstSlide).match(/^\s*#\s+(.+)/m);
+                if (m) return m[1].trim();
+            }
+            // Title form: "## Slide 1: <Heading>" where Heading is not a layout keyword.
+            m = content.match(/## Slide 1:\s*(.+)/i);
+            if (m) {
+                const h = m[1].trim();
+                if (h && !SLIDE_LAYOUTS.includes(h.toLowerCase())) return h;
+            }
+            return null;
         }
 
         function openArtifactPanel(artifacts, messageId) {
@@ -3083,13 +3236,64 @@ Topic: ${t}`
             renderSlideThumbs(slides);
         }
 
+        // Infer a layout from slide body content. The keyword form already names a
+        // layout on the header line, so this only runs for the plain-chat "title
+        // form" (## Slide N: <Heading>) where the heading is real prose, not a keyword.
+        // Priority matches the contract: chart > quote > split > stats > image >
+        // title(first, short) > section(heading-only) > bullets.
+        function inferLayout(body, index) {
+            if (/```chart\b/i.test(body)) return 'chart';
+            if (/^\s*>/m.test(body)) return 'quote';
+            if (/^\s*(Left|Right)\s*:/m.test(body)) return 'split';
+            // Stats: ≥2 bullet lines whose bold lead is a number/currency/percent.
+            const statRe = /^[-*]\s+\*{2}[\d$€£%][\d.,$%€£\w\s]*\*{2}\s*[:—-]\s+.+/;
+            const statLines = body.split('\n').filter(l => statRe.test(l.trim()));
+            if (statLines.length >= 2) return 'stats';
+            if (/!\[[^\]]*\]\([^)]+\)/.test(body)) return 'image';
+            const nonEmpty = body.split('\n').filter(l => l.trim());
+            const isShort = body.replace(/\s/g, '').length < 80 || nonEmpty.length <= 1;
+            if (index === 0 && isShort) return 'title';
+            if (!body.trim()) return 'section';
+            return 'bullets';
+        }
+
+        // Opt-in photo enrichment for slides (wired up in a later PR). Declared here
+        // so showSlide can reference it without throwing before the toggle exists.
+        let slidesPhotosEnabled = false;
+
         function parseSlides(content) {
-            const parts = content.split(/## Slide \d+:/i).filter(p => p.trim());
-            return parts.map(p => {
-                const lines = p.trim().split('\n');
-                const layoutMatch = lines[0].match(/(title|bullets|split|chart|quote)/i);
-                const layout = layoutMatch ? layoutMatch[1].toLowerCase() : 'bullets';
-                let body = lines.slice(1).join('\n').trim();
+            // Deck-level "# Title" before the first slide (plain-chat form). Stashed
+            // on the returned array so the renderer/pptx/export can use it later.
+            let deckTitle = null;
+            const firstSlide = content.search(/## Slide \d+:/i);
+            if (firstSlide !== -1) {
+                const m = content.slice(0, firstSlide).match(/^\s*#\s+(.+)/m);
+                if (m) deckTitle = m[1].trim();
+            }
+            // Split off the header. parts[0] is the preamble (deck title + --- rules)
+            // and is dropped — the old parser leaked it back in as a phantom slide.
+            const parts = content.split(/## Slide \d+:\s*/i).slice(1).filter(p => p.trim());
+            const slides = parts.map((raw, i) => {
+                // Strip standalone --- separators the model drops between slides.
+                const block = raw.replace(/^\s*---\s*$/gm, '').trim();
+                const lines = block.split('\n');
+                const first = lines[0].trim();
+                let layout, body;
+                if (first && SLIDE_LAYOUTS.includes(first.toLowerCase())) {
+                    // Keyword form (existing format): "## Slide N: <layout>".
+                    layout = first.toLowerCase();
+                    body = lines.slice(1).join('\n').trim();
+                } else {
+                    // Title form (plain chat): "## Slide N: <Heading>". Promote the
+                    // heading into the body with the prefix the renderer expects
+                    // ("# " for title, "## " for everything else) so the existing
+                    // heading extraction in renderSlideHTML works unchanged.
+                    const headingText = first;
+                    const rest = lines.slice(1).join('\n').trim();
+                    layout = inferLayout(rest, i);
+                    const prefix = layout === 'title' ? `# ${headingText}` : `## ${headingText}`;
+                    body = rest ? `${prefix}\n${rest}` : prefix;
+                }
                 // Extract speaker notes: a trailing "Notes: ..." line (supports continuation lines).
                 let notes = '';
                 const notesIdx = body.search(/(^|\n)Notes:\s*/i);
@@ -3097,8 +3301,16 @@ Topic: ${t}`
                     notes = body.slice(notesIdx).replace(/(^|\n)Notes:\s*/i, '').trim();
                     body = body.slice(0, notesIdx).trim();
                 }
-                return { layout, body, notes };
-            });
+                let heading = '';
+                if (layout === 'title') {
+                    const m = body.match(/^#\s+(.+)/m); heading = m ? m[1].trim() : '';
+                } else {
+                    const m = body.match(/^##\s+(.+)/m); heading = m ? m[1].trim() : '';
+                }
+                return { layout, heading, body, notes, index: i };
+            }).filter(s => s.body || s.layout === 'section');
+            slides.deckTitle = deckTitle;
+            return slides;
         }
 
         function showSlide(idx) {
@@ -3109,7 +3321,8 @@ Topic: ${t}`
             el._currentSlide = Math.max(0, Math.min(idx, el._slides.length - 1));
             const slide = el._slides[el._currentSlide];
             counter.textContent = `${el._currentSlide + 1} / ${el._slides.length}`;
-            container.innerHTML = renderSlideHTML(slide);
+            const isFs = document.getElementById('slideStage')?.classList.contains('slide-fullscreen');
+            container.innerHTML = renderSlideHTML(slide, { fullscreen: isFs, photos: !!slidesPhotosEnabled, photoData: el._photos });
             // Render chart into the slide's chart container (if this is a chart slide)
             const chartHost = document.getElementById('slideChartContainer');
             if (chartHost) {
@@ -3219,9 +3432,10 @@ Topic: ${t}`
             return null;
         }
 
-        function renderSlideHTML(slide) {
+        function renderSlideHTML(slide, opts) {
+            opts = opts || {};
             const body = slide.body;
-            const isFs = document.getElementById('slideStage')?.classList.contains('slide-fullscreen');
+            const isFs = !!opts.fullscreen;
             const titleSize = isFs ? '48px' : '28px';
             const bodySize = isFs ? '24px' : '15px';
             const bulletSize = isFs ? '22px' : '15px';
@@ -3861,6 +4075,7 @@ Topic: ${t}`
             checkOllama();
             loadTheme();
             seedDemo();
+            seedDemo2();
             loadChat();
             showDemoBanner();
             loadPinState();
