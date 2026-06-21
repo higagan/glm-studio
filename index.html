@@ -2130,8 +2130,23 @@ Topic: ${t}`
             navigator.clipboard.writeText(text).then(() => showToast('Copied: ' + text));
         }
 
+        // Follow-the-bottom during streaming: pin to the bottom so new tokens scroll
+        // into view, but only while the user is at the bottom. If they scroll up to
+        // read, stop yanking them down; scrolling back to the bottom re-pins. This is
+        // how ChatGPT keeps printing at the bottom while letting you scroll freely.
+        let autoStickToBottom = true;
+        let lastProgrammaticTop = -1;
+        function maybeStickToBottom() {
+            if (!autoStickToBottom) return;
+            const m = document.getElementById('messages');
+            lastProgrammaticTop = m.scrollHeight;
+            m.scrollTop = m.scrollHeight;
+        }
+
         function scrollToBottom() {
             const m = document.getElementById('messages');
+            autoStickToBottom = true;          // the user asked to follow again
+            lastProgrammaticTop = m.scrollHeight;
             m.scrollTo({ top: m.scrollHeight, behavior: 'smooth' });
         }
 
@@ -2139,6 +2154,13 @@ Topic: ${t}`
             const m = document.getElementById('messages');
             const btn = document.getElementById('scrollBottomBtn');
             const atBottom = m.scrollHeight - m.scrollTop - m.clientHeight < 100;
+            // Only re-pin on a genuine user scroll — a position that differs from
+            // the last one we set ourselves. This sidesteps the async scroll-event
+            // race and the case where a programmatic scroll was a no-op (so no
+            // event fires to reset the marker).
+            const isUserScroll = lastProgrammaticTop < 0 || Math.abs(m.scrollTop - lastProgrammaticTop) > 2;
+            if (isUserScroll) autoStickToBottom = atBottom;
+            lastProgrammaticTop = -1;
             btn.classList.toggle('show', !atBottom && m.scrollHeight > m.clientHeight + 200);
         }
 
@@ -2219,7 +2241,10 @@ Topic: ${t}`
             div.innerHTML = `<div class="message-row"><div class="message-avatar ${avatarClass}">${avatarLabel}</div><div class="message-content"><div class="message-role">${roleName}</div>${attHtml}<div class="message-body" id="body-${id}">${bodyContent}</div></div></div>`;
             div.oncontextmenu = (e) => { e.preventDefault(); showMsgContextMenu(e, id); };
             container.appendChild(div);
-            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+            // A fresh message (yours, or the assistant's placeholder at stream start)
+            // is a deliberate action — re-pin to the bottom so streaming follows.
+            autoStickToBottom = true;
+            maybeStickToBottom();
             if (!streaming) {
                 attachMessageActions(id);
                 renderMath(document.getElementById(`body-${id}`));
@@ -2233,13 +2258,14 @@ Topic: ${t}`
                 if (!msg.id) msg.id = genMsgId();
                 addMessage(msg.role, msg.content, msg.attachments, false, msg.id, msg.thinking);
             }
-            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+            autoStickToBottom = true;   // loading a conversation: land at the latest
+            maybeStickToBottom();
         }
         function updateMessage(id, content, finalize = false) {
             const body = document.getElementById(`body-${id}`);
             if (body) {
                 body.innerHTML = renderMarkdown(content);
-                document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+                maybeStickToBottom();
                 if (finalize) renderMath(body);
             }
         }
@@ -2270,7 +2296,7 @@ Topic: ${t}`
             const body = document.getElementById(`body-${id}`);
             if (!body) return;
             body.innerHTML = assistantBodyHTML(thinking, content, true);
-            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+            maybeStickToBottom();
         }
         function renderMath(el) {
             try {
@@ -2507,7 +2533,7 @@ Topic: ${t}`
                 currentChat.push(entry);
                 const finalBody = document.getElementById(`body-${msgId}`);
                 if (finalBody) { finalBody.innerHTML = assistantBodyHTML(fullThinking, fullContent, false); renderMath(finalBody); }
-                document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+                maybeStickToBottom();   // only if the user is still at the bottom
                 // Detect artifacts and add "Open in panel" button
                 const artifacts = detectArtifacts(fullContent);
                 if (artifacts.length) {
